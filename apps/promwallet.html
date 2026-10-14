@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PROMWALLET</title>
+<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+<script>if(!window.solanaWeb3)document.write('<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.3/lib/index.iife.min.js"><\/script>')</script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>if(!window.ethers)document.write('<script src="https://unpkg.com/ethers@6.13.4/dist/ethers.umd.min.js"><\/script>')</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--p:#b14cff;--g:#14f195;--bg:#07020f;--c:#140a24;--t:#eee}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#2a0b4d,var(--bg) 60%);color:var(--t);font-family:-apple-system,system-ui,sans-serif;min-height:100vh;padding:env(safe-area-inset-top) 0 90px}
+h1{text-align:center;font-size:30px;margin:18px 0 4px;background:linear-gradient(90deg,var(--p),var(--g));-webkit-background-clip:text;color:transparent;letter-spacing:3px}
+.sub{text-align:center;font-size:11px;opacity:.6;margin-bottom:10px}
+.card{background:var(--c);border:1px solid #3a1a66;border-radius:16px;margin:12px;padding:16px;box-shadow:0 0 20px #b14cff33}
+.big{font-size:34px;font-weight:800;color:var(--g);text-shadow:0 0 14px #14f19566;word-break:break-all}
+.addr{font-family:monospace;font-size:12px;word-break:break-all;background:#000;padding:8px;border-radius:8px}
+button{background:linear-gradient(90deg,var(--p),#7a2cff);color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:700;font-size:15px;margin:4px 0;width:100%}
+button.sec{background:#2a1846}button.danger{background:#a0123a}button.mini{width:auto;padding:6px 12px;font-size:13px}
+input,textarea,select{width:100%;background:#000;color:var(--t);border:1px solid #3a1a66;border-radius:10px;padding:11px;font-size:16px;margin:4px 0}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#0d0619;border-top:1px solid #3a1a66;padding-bottom:env(safe-area-inset-bottom)}
+nav a{flex:1;text-align:center;padding:14px 0;font-weight:700;color:#aaa}nav a.on{color:var(--g)}
+.scr{display:none}.scr.on{display:block}
+.warn{font-size:12px;color:#ffcf5c}.ok{color:var(--g)}.err{color:#ff5c8a}
+.row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed #3a1a66;font-size:14px}
+.row span:last-child{text-align:right;word-break:break-all}
+.fee{font-size:16px;font-weight:800;color:#ffcf5c;margin:8px 0}
+#qr{background:#fff;padding:10px;border-radius:12px;width:max-content;margin:10px auto}
+#modal{display:none;position:fixed;inset:0;background:#000c;z-index:9;overflow:auto}
+.sw{display:flex;margin:6px 12px;background:#0d0619;border:1px solid #3a1a66;border-radius:14px;overflow:hidden}
+.sw a{flex:1;text-align:center;padding:10px;font-weight:800;color:#aaa}.sw a.on{background:linear-gradient(90deg,var(--p),#7a2cff);color:#fff}
+.tok{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #2a1846}.tok small{opacity:.6}
+</style></head><body>
+<h1>PROMWALLET</h1>
+<div class="sub">Solana + EVM · keys never leave this phone · balance/send need internet</div>
+<div class="sw" id="chainSw"><a class="on" data-c="sol">◎ Solana</a><a data-c="evm">Ξ EVM</a></div>
+<div class="sw" id="evmNetSw" style="display:none"></div>
+
+<div id="s-home" class="scr on">
+ <div class="card" id="noWallet">
+  <b>No wallet loaded</b>
+  <div id="lockedBox" style="display:none"><p>Saved encrypted wallet found.</p><input id="unlockPin" type="password" placeholder="PIN / password"><button onclick="unlock()">Unlock</button></div>
+  <button onclick="generate()">⚡ Generate new wallet (Solana + EVM)</button>
+  <textarea id="impKey" rows="3" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="Paste: 12/24-word seed phrase (Phantom/MetaMask), Solana base58 secret key, JSON array [12,34,…], or EVM private key 0x…"></textarea>
+  <input id="impIdx" type="number" inputmode="numeric" placeholder="Account # (optional, default 0)">
+  <button class="sec" onclick="importKey()">Import</button>
+  <div class="warn">A seed phrase gives you both a Solana (same address as Phantom) and an EVM (same as MetaMask) wallet. Save encrypted in Settings to keep it.</div>
+ </div>
+ <div class="card" id="hasWallet" style="display:none">
+  <div style="opacity:.7" id="balLbl">Balance</div><div class="big" id="bal">—</div><div id="usd" style="opacity:.8"></div>
+  <div style="opacity:.7;margin-top:8px;font-size:12px">Loaded address (compare with Phantom/MetaMask):</div>
+  <div class="addr" id="homeAddr"></div>
+  <button onclick="refresh()">↻ Refresh</button><div id="homeMsg" class="warn"></div>
+ </div>
+ <div class="card" id="tokCard" style="display:none"><b>Tokens</b><div id="toks"></div></div>
+</div>
+
+<div id="s-recv" class="scr"><div class="card">
+ <b id="recvTitle">Receive</b><div id="qr"></div><div class="addr" id="recvAddr"></div>
+ <button onclick="copyAddr()">Copy address</button><div id="copyMsg" class="ok"></div>
+</div></div>
+
+<div id="s-send" class="scr"><div class="card">
+ <b id="sendTitle">Send</b>
+ <select id="asset"></select>
+ <input id="to" placeholder="Recipient address" autocomplete="off" autocapitalize="off" spellcheck="false">
+ <div style="display:flex;gap:6px;align-items:center"><input id="amt" type="text" inputmode="decimal" placeholder="Amount"><button class="mini sec" onclick="setMax()">MAX</button></div>
+ <div class="warn" id="sendNote"></div>
+ <button onclick="review()">Review</button><div id="sendMsg"></div>
+</div></div>
+
+<div id="s-set" class="scr">
+ <div class="card"><b>Solana RPC</b><input id="rpc"><button class="sec" onclick="saveRpc()">Save RPC</button><div class="warn">Optional. Blank = built-in public servers. A free Helius/QuickNode URL makes balances and token lists most reliable.</div></div>
+ <div class="card"><b>Save wallet on this device</b>
+  <input id="pin1" type="password" placeholder="Choose PIN / password (min 4)"><button onclick="saveEnc()">Save encrypted</button>
+  <div class="warn">Seed phrase + all keys encrypted together with AES-GCM + PBKDF2 (WebCrypto).</div><div id="saveMsg"></div></div>
+ <div class="card"><b>Backup</b><button class="sec" onclick="exportKey()">Show seed phrase / secret keys</button><div class="addr" id="expOut" style="display:none"></div>
+  <div class="warn">Never paste these anywhere online. Anyone with them owns your funds.</div></div>
+ <div class="card"><button class="sec" onclick="lockNow()">Lock (forget from memory)</button><button class="danger" onclick="wipe()">Wipe saved wallet from this device</button></div>
+ <div class="card" style="font-size:12px;opacity:.8"><b>Security & fees</b><br>Keys never leave this device — only signed transactions go to the network. Builder fee 0.5% of each send, shown before you confirm:<br>Solana (SOL & tokens) → <span class="addr" style="display:inline" id="feeSol"></span><br>EVM (native & tokens, separate 2nd tx) → <span class="addr" style="display:inline" id="feeEvm"></span><br>Libraries load from CDN (unpkg/jsdelivr/cdnjs), so it needs internet.</div>
+</div>
+
+<div id="modal"><div class="card" style="margin-top:50px">
+ <b>Confirm send</b><div id="cBody"></div>
+ <button onclick="doSend()" id="goBtn">Confirm & Send</button><button class="sec" onclick="closeModal()">Cancel</button>
+</div></div>
+
+<nav><a class="on" data-s="home">Home</a><a data-s="recv">Receive</a><a data-s="send">Send</a><a data-s="set">Settings</a></nav>
+
+<script>
+const FEE_ADDR='7DHhpjDf7d28zMyy4aDkM4FjVfG1kyWAQRjBo2LdQ2Qr', FEE_BPS=50, MIN_FEE=5000, LPS=1e9;
+const EVM_FEE_ADDR_RAW='0x4b4a053780a4f652836b8bdaae413b75691f1062';
+const USDC='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',USDT='Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',WSOL='So11111111111111111111111111111111111111112';
+const TOKEN_PROG='TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',TOKEN22='TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',ATA_PROG='ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',SYS='11111111111111111111111111111111';
+const KNOWN={[USDC]:{symbol:'USDC',name:'USD Coin',decimals:6,prog:TOKEN_PROG},[USDT]:{symbol:'USDT',name:'Tether USD',decimals:6,prog:TOKEN_PROG}};
+const ATA_RENT=2039280;
+const B58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function b58dec(s){let b=[];for(const ch of s){let v=B58.indexOf(ch);if(v<0)throw Error('bad base58');for(let i=0;i<b.length;i++){v+=b[i]*58;b[i]=v&255;v>>=8}while(v){b.push(v&255);v>>=8}}for(const ch of s){if(ch==='1')b.push(0);else break}return new Uint8Array(b.reverse())}
+function b58encFix(u){let z=0;while(z<u.length&&u[z]===0)z++;let d=[];for(const x of u){let c=x;for(let i=0;i<d.length;i++){c+=d[i]<<8;d[i]=c%58;c=c/58|0}while(c){d.push(c%58);c=c/58|0}}return '1'.repeat(z)+d.reverse().map(i=>B58[i]).join('')}
+function validAddr(a){try{return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a)&&b58dec(a).length===32}catch(e){return false}}
+if(!validAddr(FEE_ADDR))throw Error('bad FEE_ADDR');
+function calcFee(l){let f=Math.floor(l*FEE_BPS/10000);if(f<=0)return 0;return Math.max(f,MIN_FEE)}
+function tokFee(a){return a*BigInt(FEE_BPS)/10000n}
+function fmtU(v,d){v=BigInt(v);const neg=v<0n;if(neg)v=-v;const s=v.toString().padStart(d+1,'0');let i=s.slice(0,s.length-d),f=d?s.slice(-d).replace(/0+$/,''):'';i=i.replace(/\B(?=(\d{3})+(?!\d))/g,',');return (neg?'-':'')+i+(f?'.'+f:'')}
+function parseU(str,d){str=String(str).trim().replace(/,/g,'');if(!/^\d*\.?\d*$/.test(str)||str===''||str==='.')throw Error('Invalid amount');let[i,f='']=str.split('.');if(f.length>d)throw Error('Max '+d+' decimals');return BigInt((i||'0')+f.padEnd(d,'0'))}
+const $=id=>document.getElementById(id);
+const LS={g:k=>{try{return localStorage.getItem(k)}catch(e){return null}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const W=window.solanaWeb3,E=window.ethers;
+let EVM_FEE_ADDR='';try{EVM_FEE_ADDR=E?E.getAddress(EVM_FEE_ADDR_RAW):''}catch(e){EVM_FEE_ADDR=''}
+let vault={sol:null,evm:null,mnemonic:null,idx:0};let kp=null,ew=null,chain=LS.g('pw_chain')||'sol';
+
+/* ---------- SLIP-0010 ed25519 (Phantom path m/44'/501'/i'/0') ---------- */
+async function hmac512(key,data){if(E&&E.computeHmac)return E.getBytes(E.computeHmac('sha512',key,data));const k=await crypto.subtle.importKey('raw',key,{name:'HMAC',hash:'SHA-512'},false,['sign']);return new Uint8Array(await crypto.subtle.sign('HMAC',k,data))}
+async function slip10(seed,path){let I=await hmac512(new TextEncoder().encode('ed25519 seed'),seed);let k=I.slice(0,32),c=I.slice(32);for(const seg of path.replace(/^m\//,'').split('/')){const n=(parseInt(seg)|0x80000000)>>>0;const d=new Uint8Array(37);d[0]=0;d.set(k,1);d[33]=n>>>24;d[34]=(n>>>16)&255;d[35]=(n>>>8)&255;d[36]=n&255;I=await hmac512(c,d);k=I.slice(0,32);c=I.slice(32)}return k}
+async function solFromMnemonic(m,i){const seed=E.getBytes(E.Mnemonic.fromPhrase(m).computeSeed());return W.Keypair.fromSeed(await slip10(seed,"m/44'/501'/"+i+"'/0'"))}
+function evmFromMnemonic(m,i){return E.HDNodeWallet.fromPhrase(m,undefined,"m/44'/60'/0'/0/"+i)}
+
+/* ---------- Solana RPC ---------- */
+const PUBLIC_RPCS=['https://solana-rpc.publicnode.com']; /* api.mainnet-beta blocks browsers (bad CORS header) */
+function rpcList(){const l=[],c=(LS.g('pw_rpc')||'').trim();if(c)l.push(c);PUBLIC_RPCS.forEach(u=>{if(!l.includes(u))l.push(u)});return l}
+let lastRpc='';
+async function rpcCall(method,params,tmo){let errs=[];for(const u of rpcList()){const ac=window.AbortController?new AbortController():null;const t=setTimeout(()=>ac&&ac.abort(),tmo||8000);try{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:ac?ac.signal:undefined});clearTimeout(t);let j=null;try{j=await r.json()}catch(e){}if(!j)throw Error('HTTP '+r.status);if(j.error)throw Error(j.error.message||JSON.stringify(j.error));lastRpc=u;return j.result}catch(e){clearTimeout(t);errs.push(u.replace(/^https?:\/\//,'').split('/')[0]+': '+(e.name==='AbortError'?'timeout':e.message))}}throw Error('All servers failed — '+errs.join(' | '))}
+async function jget(u,tmo){const ac=new AbortController();const t=setTimeout(()=>ac.abort(),tmo||8000);try{const r=await fetch(u,{signal:ac.signal});if(!r.ok)throw Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(t)}}
+async function pwBalance(addr){const r=await rpcCall('getBalance',[addr,{commitment:'confirmed'}]);return BigInt(r.value)}
+function ataOf(owner,mint,prog){return W.PublicKey.findProgramAddressSync([new W.PublicKey(owner).toBuffer(),new W.PublicKey(prog).toBuffer(),new W.PublicKey(mint).toBuffer()],new W.PublicKey(ATA_PROG))[0].toBase58()}
+async function multi(keys){const out=[];for(let i=0;i<keys.length;i+=100){const r=await rpcCall('getMultipleAccounts',[keys.slice(i,i+100),{encoding:'jsonParsed',commitment:'confirmed'}]);out.push(...r.value)}return out}
+/* All SPL tokens: 1) indexed getTokenAccountsByOwner (works on custom RPCs); 2) else mint list from Jupiter balances API, amounts verified on-chain via getMultipleAccounts of the ATAs (non-indexed call, works on publicnode). */
+async function jupMeta(mints){const o={};for(let i=0;i<mints.length;i+=100){try{const j=await jget('https://lite-api.jup.ag/tokens/v2/search?query='+mints.slice(i,i+100).join(','));j.forEach(x=>o[x.id]=x)}catch(e){}}return o}
+async function pwTokens(addr){let accts=[],src='';try{for(const p of [TOKEN_PROG,TOKEN22]){const r=await rpcCall('getTokenAccountsByOwner',[addr,{programId:p},{encoding:'jsonParsed',commitment:'confirmed'}]);r.value.forEach(x=>{const i=x.account.data.parsed.info;accts.push({acct:x.pubkey,prog:p,mint:i.mint,decimals:i.tokenAmount.decimals,amount:BigInt(i.tokenAmount.amount)})})}src='rpc'}catch(e){accts=[];
+  const j=await jget('https://lite-api.jup.ag/ultra/v1/balances/'+addr);const mints=Object.keys(j).filter(k=>k!=='SOL'&&validAddr(k)&&BigInt(j[k].amount||0)>0n);const meta=await jupMeta(mints.filter(m=>!KNOWN[m]));
+  const cand=[];mints.forEach(m=>{const k=KNOWN[m]||{},x=meta[m]||{};const prog=k.prog||x.tokenProgram;let dec=k.decimals!=null?k.decimals:x.decimals;if(dec==null&&j[m].uiAmount){dec=Math.round(Math.log10(Number(j[m].amount)/j[m].uiAmount))}if(!prog||dec==null)return;cand.push({mint:m,prog,decimals:dec,amount:BigInt(j[m].amount),acct:ataOf(addr,m,prog),symbol:x.symbol,name:x.name,verified:!!x.isVerified})});
+  try{const ai=await multi(cand.map(c=>c.acct));cand.forEach((c,i)=>{const a=ai[i];c.onchain=!!(a&&a.data&&a.data.parsed);if(c.onchain){c.amount=BigInt(a.data.parsed.info.tokenAmount.amount)}})}catch(e){}
+  accts=cand;src='jup'}
+ const by={};accts.forEach(a=>{const m=a.mint;if(!by[m])by[m]={mint:m,prog:a.prog,decimals:a.decimals,amount:0n,acct:a.acct,acctAmt:-1n,symbol:a.symbol,name:a.name,verified:a.verified,onchain:a.onchain};by[m].amount+=a.amount;if(a.acct===ataOf(addr,m,a.prog)||a.amount>by[m].acctAmt){by[m].acct=a.acct;by[m].acctAmt=a.amount}});
+ const list=Object.values(by).filter(t=>t.amount>0n);list.forEach(t=>{const k=KNOWN[t.mint];if(k){t.symbol=k.symbol;t.name=k.name;t.verified=true}});
+ const unk=list.filter(t=>!t.symbol).map(t=>t.mint);if(unk.length){const mm=await jupMeta(unk);unk.forEach(m=>{if(mm[m]){by[m].symbol=mm[m].symbol;by[m].name=mm[m].name;by[m].verified=!!mm[m].isVerified}})}
+ list.forEach(t=>{if(!t.symbol)t.symbol=t.mint.slice(0,4)+'…'+t.mint.slice(-4)});list.sort((a,b)=>(KNOWN[b.mint]?2:b.verified?1:0)-(KNOWN[a.mint]?2:a.verified?1:0));return {list:list.slice(0,300),src,total:list.length}}
+async function pwPrices(mints){try{const j=await jget('https://lite-api.jup.ag/price/v3?ids='+mints.slice(0,50).join(','));const o={};Object.keys(j).forEach(k=>o[k]=j[k].usdPrice);return o}catch(e){return {}}}
+
+/* ---------- Solana tx builders (no broadcast) ---------- */
+function ixSysTransfer(from,to,lamports){const d=new Uint8Array(12);d[0]=2;let v=BigInt(lamports);for(let i=0;i<8;i++){d[4+i]=Number(v&255n);v>>=8n}return new W.TransactionInstruction({programId:new W.PublicKey(SYS),keys:[{pubkey:from,isSigner:true,isWritable:true},{pubkey:new W.PublicKey(to),isSigner:false,isWritable:true}],data:d})}
+function ixAtaIdem(payer,ata,owner,mint,prog){return new W.TransactionInstruction({programId:new W.PublicKey(ATA_PROG),keys:[{pubkey:payer,isSigner:true,isWritable:true},{pubkey:new W.PublicKey(ata),isSigner:false,isWritable:true},{pubkey:new W.PublicKey(owner),isSigner:false,isWritable:false},{pubkey:new W.PublicKey(mint),isSigner:false,isWritable:false},{pubkey:new W.PublicKey(SYS),isSigner:false,isWritable:false},{pubkey:new W.PublicKey(prog),isSigner:false,isWritable:false}],data:Uint8Array.from([1])})}
+function ixTransferChecked(src,mint,dst,owner,amount,dec,prog){const d=new Uint8Array(10);d[0]=12;let v=BigInt(amount);for(let i=0;i<8;i++){d[1+i]=Number(v&255n);v>>=8n}d[9]=dec;return new W.TransactionInstruction({programId:new W.PublicKey(prog),keys:[{pubkey:new W.PublicKey(src),isSigner:false,isWritable:true},{pubkey:new W.PublicKey(mint),isSigner:false,isWritable:false},{pubkey:new W.PublicKey(dst),isSigner:false,isWritable:true},{pubkey:owner,isSigner:true,isWritable:false}],data:d})}
+async function solBuild(p,keypair,blockhash){const k=keypair||kp;const tx=new W.Transaction();
+ if(p.kind==='sol'){tx.add(ixSysTransfer(k.publicKey,p.to,p.l));if(p.f>0)tx.add(ixSysTransfer(k.publicKey,FEE_ADDR,p.f))}
+ else{const t=p.tok,dst=ataOf(p.to,t.mint,t.prog);tx.add(ixAtaIdem(k.publicKey,dst,p.to,t.mint,t.prog));tx.add(ixTransferChecked(t.acct,t.mint,dst,k.publicKey,p.amt,t.decimals,t.prog));
+  if(p.fee>0n){const fa=ataOf(FEE_ADDR,t.mint,t.prog);tx.add(ixAtaIdem(k.publicKey,fa,FEE_ADDR,t.mint,t.prog));tx.add(ixTransferChecked(t.acct,t.mint,fa,k.publicKey,p.fee,t.decimals,t.prog))}}
+ tx.recentBlockhash=blockhash||(await rpcCall('getLatestBlockhash',[{commitment:'confirmed'}])).value.blockhash;tx.feePayer=k.publicKey;tx.sign(k);return tx}
+
+/* ---------- EVM ---------- */
+const NETS={
+ eth:{name:'Ethereum',id:1,sym:'ETH',rpcs:['https://ethereum-rpc.publicnode.com','https://eth.llamarpc.com'],exp:'https://etherscan.io',toks:[['USDC','0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'],['USDT','0xdAC17F958D2ee523a2206206994597C13D831ec7']]},
+ base:{name:'Base',id:8453,sym:'ETH',rpcs:['https://base-rpc.publicnode.com','https://mainnet.base.org'],exp:'https://basescan.org',toks:[['USDC','0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'],['USDT','0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2']]},
+ bsc:{name:'BNB Chain',id:56,sym:'BNB',rpcs:['https://bsc-rpc.publicnode.com','https://bsc-dataseed.bnbchain.org'],exp:'https://bscscan.com',toks:[['USDC','0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d'],['USDT','0x55d398326f99059fF775485246999027B3197955']]},
+ polygon:{name:'Polygon',id:137,sym:'POL',rpcs:['https://polygon-bor-rpc.publicnode.com','https://polygon-rpc.com'],exp:'https://polygonscan.com',toks:[['USDC','0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'],['USDT','0xc2132D05D31c914a87C6611C10748AEb04B58e8F']]},
+ arb:{name:'Arbitrum',id:42161,sym:'ETH',rpcs:['https://arbitrum-one-rpc.publicnode.com','https://arb1.arbitrum.io/rpc'],exp:'https://arbiscan.io',toks:[['USDC','0xaf88d065e77c8cC2239327C5EDb3A432268e5831'],['USDT','0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9']]}};
+let net=LS.g('pw_net')||'eth';if(!NETS[net])net='eth';
+const ERC20=['function balanceOf(address) view returns (uint256)','function decimals() view returns (uint8)','function transfer(address,uint256) returns (bool)'];
+const provs={};
+function prov(n,i){const k=n+(i||0);if(!provs[k])provs[k]=new E.JsonRpcProvider(NETS[n].rpcs[i||0],NETS[n].id,{staticNetwork:true,batchMaxCount:1});return provs[k]}
+async function withProv(n,fn){let errs=[];for(let i=0;i<NETS[n].rpcs.length;i++){try{return await fn(prov(n,i))}catch(e){errs.push(NETS[n].rpcs[i].split('/')[2]+': '+(e.shortMessage||e.message))}}throw Error(errs.join(' | '))}
+async function evmBalances(n,addr){return withProv(n,async p=>{const nat=await p.getBalance(addr);const toks=[];for(const[s,a]of NETS[n].toks){const c=new E.Contract(a,ERC20,p);const[b,d]=await Promise.all([c.balanceOf(addr),c.decimals()]);toks.push({symbol:s,addr:a,decimals:Number(d),amount:b})}return{nat,toks}})}
+async function evmBuild(p,wallet){const w=wallet||ew;return withProv(p.net,async pr=>{const s=w.connect(pr);const from=w.address;const nonce=await pr.getTransactionCount(from,'pending');const fd=await pr.getFeeData();const N=NETS[p.net];
+ const mk=(to,amt)=>p.token?{to:p.token.addr,data:new E.Interface(ERC20).encodeFunctionData('transfer',[to,amt]),value:0n}:{to,value:amt,data:'0x'};
+ const txs=[mk(p.to,p.amt)];if(p.fee>0n&&EVM_FEE_ADDR)txs.push(mk(EVM_FEE_ADDR,p.fee));
+ const out=[];let gasTotal=0n;for(let i=0;i<txs.length;i++){const t=txs[i];let gl;try{gl=await pr.estimateGas({...t,from})}catch(e){gl=p.token?65000n:21000n;t._estErr=e.shortMessage||e.message}gl=p.token?gl*12n/10n:gl;const base={...t,chainId:N.id,nonce:nonce+i,gasLimit:gl};delete base._estErr;
+  if(fd.maxFeePerGas){base.maxFeePerGas=fd.maxFeePerGas;base.maxPriorityFeePerGas=fd.maxPriorityFeePerGas||0n;base.type=2}else{base.gasPrice=fd.gasPrice;base.type=0}
+  const cost=gl*(fd.maxFeePerGas||fd.gasPrice);gasTotal+=cost;out.push({req:base,cost,estErr:t._estErr,raw:await s.signTransaction(base)})}return{txs:out,gasTotal}})}
+
+if(typeof window!=='undefined'){
+window.PW={b58dec,b58encFix,validAddr,calcFee,tokFee,fmtU,parseU,slip10,solFromMnemonic,evmFromMnemonic,pwBalance,pwTokens,pwPrices,ataOf,solBuild,evmBuild,evmBalances,rpcCall,FEE_ADDR,get EVM_FEE_ADDR(){return EVM_FEE_ADDR},NETS,get lastRpc(){return lastRpc},setVault:v=>loadVault(v)};
+$('rpc').value=LS.g('pw_rpc')||'';$('rpc').placeholder='Custom Solana RPC URL (optional)';$('feeSol').textContent=FEE_ADDR;$('feeEvm').textContent=EVM_FEE_ADDR||'(disabled)';
+function banner(t){let b=document.createElement('div');b.style.cssText='background:#5a1a1a;color:#fff;padding:10px;margin:8px;border-radius:8px;font-size:13px';b.textContent=t;document.body.insertBefore(b,document.body.firstChild)}
+if(!W)banner('⚠️ Solana library failed to load — check internet and reopen.');if(!E)banner('⚠️ EVM library (ethers) failed to load — seed phrases & EVM need it. Check internet and reopen.');
+document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>{document.querySelectorAll('nav a').forEach(x=>x.classList.remove('on'));a.classList.add('on');document.querySelectorAll('.scr').forEach(x=>x.classList.remove('on'));$('s-'+a.dataset.s).classList.add('on')});
+$('evmNetSw').innerHTML=Object.keys(NETS).map(k=>'<a data-n="'+k+'" style="font-size:12px;padding:8px 2px">'+NETS[k].name+'</a>').join('');
+document.querySelectorAll('#chainSw a').forEach(a=>a.onclick=()=>{chain=a.dataset.c;LS.s('pw_chain',chain);render()});
+document.querySelectorAll('#evmNetSw a').forEach(a=>a.onclick=()=>{net=a.dataset.n;LS.s('pw_net',net);render()});
+if(LS.g('pw_enc'))$('lockedBox').style.display='block';
+function curAddr(){return chain==='sol'?(kp?kp.publicKey.toBase58():''):(ew?ew.address:'')}
+let solToks=[],evmData=null,solBal=null;
+function render(){document.querySelectorAll('#chainSw a').forEach(x=>x.classList.toggle('on',x.dataset.c===chain));$('evmNetSw').style.display=chain==='evm'?'flex':'none';document.querySelectorAll('#evmNetSw a').forEach(x=>x.classList.toggle('on',x.dataset.n===net));
+ const has=!!(kp||ew);$('noWallet').style.display=has?'none':'block';$('hasWallet').style.display=has?'block':'none';const a=curAddr();
+ $('homeAddr').textContent=a||(chain==='sol'?'No Solana key loaded (import a seed phrase or Solana key)':'No EVM key loaded (import a seed phrase or 0x private key)');$('recvAddr').textContent=a;
+ $('recvTitle').textContent=chain==='sol'?'Receive SOL & any Solana token':'Receive on '+NETS[net].name+' ('+NETS[net].sym+' / tokens) — same address on all EVM chains';
+ $('qr').innerHTML='';if(a){try{new QRCode($('qr'),{text:a,width:200,height:200})}catch(e){$('qr').textContent='QR lib not loaded'}}
+ $('sendTitle').textContent=chain==='sol'?'Send on Solana':'Send on '+NETS[net].name;$('to').placeholder=chain==='sol'?'Recipient Solana address':'Recipient 0x address';
+ $('sendNote').textContent=chain==='sol'?'Builder fee 0.5% (same token) → '+FEE_ADDR.slice(0,6)+'…'+FEE_ADDR.slice(-4)+', added on top and shown before confirm.':(EVM_FEE_ADDR?'Builder fee 0.5% (same token) → '+EVM_FEE_ADDR.slice(0,6)+'…'+EVM_FEE_ADDR.slice(-4)+' as a separate 2nd transaction, shown before confirm.':'EVM builder fee disabled.');
+ $('bal').textContent='—';$('usd').textContent='';$('toks').innerHTML='';$('tokCard').style.display='none';fillAssets();if(has)refresh()}
+function fillAssets(){const s=$('asset');let o=[];if(chain==='sol'){o.push(['SOL','SOL'+(solBal!==null?' — '+fmtU(solBal,9):'')]);solToks.forEach(t=>o.push([t.mint,t.symbol+(t.verified?'':' (unverified '+t.mint.slice(0,4)+'…)')+' — '+fmtU(t.amount,t.decimals)]))}else{o.push(['NATIVE',NETS[net].sym+(evmData?' — '+E.formatEther(evmData.nat):'')]);NETS[net].toks.forEach(([sy,ad],i)=>{const t=evmData&&evmData.toks[i];o.push([ad,sy+(t?' — '+fmtU(t.amount,t.decimals):'')])})}const v=s.value;s.innerHTML=o.map(x=>'<option value="'+x[0]+'">'+esc(x[1])+'</option>').join('');if([...s.options].some(x=>x.value===v))s.value=v}
+let gen=0;window.refresh=async()=>{const a=curAddr();if(!a)return;const my=++gen;const stale=()=>{if(my!==gen)throw 0};const c=chain,n=net;$('homeMsg').textContent='Checking balance…';
+ try{if(c==='sol'){const l=await pwBalance(a);stale();solBal=l;$('balLbl').textContent='SOL balance';$('bal').textContent=fmtU(l,9)+' SOL';$('homeMsg').textContent='✓ via '+lastRpc.split('/')[2]+' · '+new Date().toLocaleTimeString()+' · loading tokens…';
+   let tk={list:[]};try{tk=await pwTokens(a);stale()}catch(e){if(e===0)throw 0;$('homeMsg').textContent+=' (tokens failed: '+e.message+')'}solToks=tk.list;const pr=await pwPrices([WSOL,...solToks.map(t=>t.mint)]);stale();let usd=pr[WSOL]?Number(l)/1e9*pr[WSOL]:0;
+   $('toks').innerHTML=(tk.total>solToks.length?'<small>Showing '+solToks.length+' of '+tk.total+'</small>':'')+(solToks.length?solToks.map(t=>{const v=pr[t.mint]?Number(fmtU(t.amount,t.decimals).replace(/,/g,''))*pr[t.mint]:null;if(v)usd+=v;return '<div class="tok"><div><b>'+esc(t.symbol)+'</b>'+(t.verified?' <small class="ok">✓</small>':' <small class="warn">unverified</small>')+(t.prog===TOKEN22?' <small>T22</small>':'')+'<br><small>'+t.mint.slice(0,6)+'…'+t.mint.slice(-4)+'</small></div><div style="text-align:right">'+fmtU(t.amount,t.decimals)+(v!=null?'<br><small>≈ $'+v.toFixed(2)+'</small>':'')+'</div></div>'}).join(''):'<small>No tokens</small>');$('tokCard').style.display='block';
+   $('usd').textContent=pr[WSOL]?'≈ $'+usd.toFixed(2)+' total (SOL @ $'+pr[WSOL].toFixed(2)+', prices: Jupiter)':'';$('homeMsg').textContent='✓ via '+lastRpc.split('/')[2]+' · '+new Date().toLocaleTimeString()+(tk.src==='jup'?' · token list via Jupiter':'')}
+  else{const d=await evmBalances(n,a);stale();evmData=d;$('balLbl').textContent=NETS[n].name+' balance';$('bal').textContent=fmtU(d.nat,18)+' '+NETS[n].sym;
+   $('toks').innerHTML=d.toks.map(t=>'<div class="tok"><b>'+t.symbol+'</b><span>'+fmtU(t.amount,t.decimals)+'</span></div>').join('');$('tokCard').style.display='block';$('homeMsg').textContent='✓ '+NETS[n].name+' · '+new Date().toLocaleTimeString()}
+  fillAssets()}catch(e){if(e!==0)$('homeMsg').textContent='Balance error (last value kept): '+(e.message||e)+' — check internet or add a custom RPC in Settings'}};
+setInterval(()=>{if((kp||ew)&&$('s-home').classList.contains('on')&&!document.hidden)refresh()},30000);
+window.copyAddr=async()=>{const a=curAddr();try{await navigator.clipboard.writeText(a);$('copyMsg').textContent='Copied!'}catch(e){prompt('Copy:',a)}};
+async function loadVault(v){vault=Object.assign({sol:null,evm:null,mnemonic:null,idx:0},v);kp=null;ew=null;
+ if(vault.mnemonic){kp=await solFromMnemonic(vault.mnemonic,vault.idx);ew=evmFromMnemonic(vault.mnemonic,vault.idx)}
+ if(vault.sol)kp=W.Keypair.fromSecretKey(b58dec(vault.sol));if(vault.evm)ew=new E.Wallet(vault.evm);
+ if(chain==='sol'&&!kp&&ew)chain='evm';if(chain==='evm'&&!ew&&kp)chain='sol';solToks=[];evmData=null;solBal=null;render()}
+window.generate=async()=>{if(!confirm('Generate a new wallet? Write down the seed phrase from Settings → Backup before funding it.'))return;await loadVault({mnemonic:E.Wallet.createRandom().mnemonic.phrase})};
+window.importKey=async()=>{try{const s=$('impKey').value.trim().replace(/\s+/g,' ');const idx=parseInt($('impIdx').value)||0;let v;
+ if(s.split(' ').length>=12){const m=s.toLowerCase();if(!E.Mnemonic.isValidMnemonic(m))throw Error('Seed phrase not valid (check spelling / word order)');v={mnemonic:m,idx}}
+ else if(/^(0x)?[0-9a-fA-F]{64}$/.test(s)){v={evm:(s.startsWith('0x')?'':'0x')+s}}
+ else{const b=s.startsWith('[')?Uint8Array.from(JSON.parse(s)):b58dec(s);let k;if(b.length===32)k=W.Keypair.fromSeed(b);else if(b.length===64)k=W.Keypair.fromSecretKey(b);else throw Error('Key must be a seed phrase, 64-byte Solana key, or 0x EVM key');v={sol:b58encFix(k.secretKey)}}
+ await loadVault(v);$('impKey').value=''}catch(e){alert('Import failed: '+e.message)}};
+let pend=null;
+function rows(r){return r.map(x=>'<div class="row"><span>'+x[0]+'</span><span>'+x[1]+'</span></div>').join('')}
+function msg(t,c){$('sendMsg').innerHTML='<p class="'+c+'">'+t+'</p>'}
+window.setMax=()=>{const s=$('asset').value;if(chain==='sol'){if(s==='SOL'){if(solBal===null)return;let b=Number(solBal)-5000-1000000;let l=Math.floor(b/(1+FEE_BPS/10000));while(l>0&&l+calcFee(l)>b)l--;$('amt').value=l>0?fmtU(BigInt(l),9).replace(/,/g,''):'0'}else{const t=solToks.find(x=>x.mint===s);if(!t)return;const a=t.acctAmt*10000n/(10000n+BigInt(FEE_BPS));$('amt').value=fmtU(a,t.decimals).replace(/,/g,'')}}
+ else{if(!evmData)return;if(s==='NATIVE'){$('amt').value='';msg('MAX for '+NETS[net].sym+' depends on gas — enter amount; the confirm screen shows gas and checks your balance.','warn')}else{const t=evmData.toks.find(x=>x.addr===s);const a=t.amount*10000n/(10000n+BigInt(FEE_BPS));$('amt').value=fmtU(a,t.decimals).replace(/,/g,'')}}};
+window.review=async()=>{$('sendMsg').innerHTML='';const to=$('to').value.trim(),as=$('asset').value;try{
+ if(chain==='sol'){if(!kp)throw Error('Load a Solana wallet first');if(!validAddr(to))throw Error('Invalid Solana address');
+  if(as==='SOL'){const l=Number(parseU($('amt').value,9));if(!(l>0))throw Error('Enter an amount');const f=calcFee(l);if(solBal!==null&&BigInt(l+f+5000)>solBal)throw Error('Not enough SOL (need '+fmtU(BigInt(l+f+5000),9)+')');pend={kind:'sol',to,l,f};
+   $('cBody').innerHTML=rows([['Send',fmtU(BigInt(l),9)+' SOL'],['To','<span class="addr">'+to+'</span>']])+'<div class="fee">Builder fee 0.5%: '+(f?fmtU(BigInt(f),9)+' SOL':'0 (amount too small)')+'</div>'+rows([['Fee address','<span class="addr">'+FEE_ADDR+'</span>'],['Network fee','0.000005 SOL'],['<b>Total leaving wallet</b>','<b>'+fmtU(BigInt(l+f+5000),9)+' SOL</b>']])}
+  else{const t=solToks.find(x=>x.mint===as);if(!t)throw Error('Pick a token');const amt=parseU($('amt').value,t.decimals);if(amt<=0n)throw Error('Enter an amount');const fee=tokFee(amt);if(amt+fee>t.acctAmt)throw Error('Not enough '+t.symbol+' (need '+fmtU(amt+fee,t.decimals)+' incl. fee)');
+   const dst=ataOf(to,t.mint,t.prog),fa=ataOf(FEE_ADDR,t.mint,t.prog);const ex=await multi([dst,fa]);const rent=(ex[0]?0:ATA_RENT)+(fee>0n&&!ex[1]?ATA_RENT:0);const solNeed=BigInt(rent+5000);
+   if(solBal!==null&&solNeed>solBal)throw Error('Need '+fmtU(solNeed,9)+' SOL for network fee/account rent');pend={kind:'spl',to,tok:t,amt,fee};
+   $('cBody').innerHTML=rows([['Send',fmtU(amt,t.decimals)+' '+esc(t.symbol)],['Token mint','<span class="addr">'+t.mint+'</span>'],['To','<span class="addr">'+to+'</span>']])+'<div class="fee">Builder fee 0.5%: '+(fee>0n?fmtU(fee,t.decimals)+' '+esc(t.symbol):'0 (amount too small)')+'</div>'+rows([['Fee address','<span class="addr">'+FEE_ADDR+'</span>'],['Recipient token account',ex[0]?'exists':'new — rent ~0.00204 SOL (paid by you)'],['Fee token account',fee===0n?'—':ex[1]?'exists':'new (first time) — rent ~0.00204 SOL (paid by you)'],['Network fee','0.000005 SOL'],['<b>Total '+esc(t.symbol)+'</b>','<b>'+fmtU(amt+fee,t.decimals)+'</b>'],['<b>Total SOL</b>','<b>'+fmtU(solNeed,9)+' SOL</b>']])}}
+ else{if(!ew)throw Error('Load an EVM wallet first');let toA;try{toA=E.getAddress(to)}catch(e){throw Error('Invalid 0x address (check it / checksum)')}const N=NETS[net];let token=null,dec=18,sym=N.sym;if(as!=='NATIVE'){const t=(evmData&&evmData.toks.find(x=>x.addr===as))||null;if(!t)throw Error('Balances not loaded yet — refresh');token=t;dec=t.decimals;sym=t.symbol}
+  const amt=parseU($('amt').value,dec);if(amt<=0n)throw Error('Enter an amount');const fee=EVM_FEE_ADDR?tokFee(amt):0n;$('sendMsg').innerHTML='<p class="warn">Estimating gas…</p>';
+  const p={net,to:toA,token,amt,fee};const b=await evmBuild(p);p.built=b;const nat=evmData?evmData.nat:0n;const needNat=b.gasTotal+(token?0n:amt+fee);
+  if(token&&amt+fee>token.amount)throw Error('Not enough '+sym+' (need '+fmtU(amt+fee,dec)+' incl. fee)');if(needNat>nat)throw Error('Not enough '+N.sym+' for this + gas (need ≈ '+fmtU(needNat,18)+' '+N.sym+')');pend={kind:'evm',...p};$('sendMsg').innerHTML='';
+  $('cBody').innerHTML=rows([['Network',N.name],['Send',fmtU(amt,dec)+' '+sym],['To','<span class="addr">'+toA+'</span>'],['Tx 1 gas (max)',fmtU(b.txs[0].cost,18)+' '+N.sym+(b.txs[0].estErr?' ⚠️ estimate failed':'')]])+'<div class="fee">Builder fee 0.5%: '+(fee>0n?fmtU(fee,dec)+' '+sym+' (separate 2nd tx)':'0 (amount too small)')+'</div>'+rows((fee>0n?[['Fee address','<span class="addr">'+EVM_FEE_ADDR+'</span>'],['Tx 2 gas (max)',fmtU(b.txs[1].cost,18)+' '+N.sym]]:[]).concat([['<b>Total '+sym+'</b>','<b>'+fmtU(amt+fee,dec)+'</b>'],['<b>Total gas (max)</b>','<b>'+fmtU(b.gasTotal,18)+' '+N.sym+'</b>']]))+'<div class="warn">Gas shown is the maximum; actual is usually lower.</div>'}
+ $('modal').style.display='block'}catch(e){msg(esc(e.message),'err')}};
+window.closeModal=()=>{$('modal').style.display='none'};
+async function solConfirm(sig){for(let i=0;i<40;i++){await new Promise(r=>setTimeout(r,1500));try{const st=(await rpcCall('getSignatureStatuses',[[sig]])).value[0];if(st&&st.err)throw Error('Transaction failed: '+JSON.stringify(st.err));if(st&&(st.confirmationStatus==='confirmed'||st.confirmationStatus==='finalized'))return}catch(e){if(/Transaction failed/.test(e.message))throw e}}throw Error('Sent but not confirmed yet — check Solscan: '+sig)}
+window.doSend=async()=>{const b=$('goBtn');b.disabled=true;b.textContent='Sending…';try{
+ if(pend.kind==='evm'){const N=NETS[pend.net];const fresh=await evmBuild(pend);const hashes=[];await withProv(pend.net,async pr=>{for(let i=hashes.length;i<fresh.txs.length;i++){const r=await pr.broadcastTransaction(fresh.txs[i].raw);hashes.push(r.hash);if(i===0){b.textContent='Confirming…';await r.wait(1,180000)}}});closeModal();msg('✅ Sent!<br>'+hashes.map((h,i)=>(i?'Builder fee tx: ':'Payment tx: ')+'<a style="color:#14f195" target="_blank" href="'+N.exp+'/tx/'+h+'">'+h.slice(0,14)+'…</a>').join('<br>'),'ok')}
+ else{const tx=await solBuild(pend);const raw=tx.serialize();let bin='';raw.forEach(x=>bin+=String.fromCharCode(x));const sig=await rpcCall('sendTransaction',[btoa(bin),{encoding:'base64',preflightCommitment:'confirmed'}],15000);b.textContent='Confirming…';await solConfirm(sig);closeModal();msg('✅ Sent!<br><span class="addr">'+sig+'</span><br><a style="color:#14f195" target="_blank" href="https://solscan.io/tx/'+sig+'">View on Solscan</a>','ok')}
+ setTimeout(refresh,2000)}catch(e){closeModal();msg('Send failed: '+esc(e.shortMessage||e.message),'err')}b.disabled=false;b.textContent='Confirm & Send'};
+window.saveRpc=()=>{LS.s('pw_rpc',$('rpc').value.trim());alert('RPC saved');refresh()};
+async function key(pin,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:200000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+window.saveEnc=async()=>{const p=$('pin1').value;if(!kp&&!ew)return alert('No wallet loaded');if(p.length<4)return alert('PIN too short');if(!(window.crypto&&crypto.subtle))return $('saveMsg').innerHTML='<p class="err">WebCrypto unavailable here — not saving.</p>';const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await key(p,salt),new TextEncoder().encode(JSON.stringify(vault))));localStorage.setItem('pw_enc',JSON.stringify({v:3,s:b58encFix(salt),i:b58encFix(iv),c:b58encFix(ct)}));$('pin1').value='';$('saveMsg').innerHTML='<p class="ok">Saved encrypted on this device.</p>'};
+window.unlock=async()=>{let pt;try{const o=JSON.parse(localStorage.getItem('pw_enc'));pt=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:b58dec(o.i)},await key($('unlockPin').value,b58dec(o.s)),b58dec(o.c)))}catch(e){return alert('Wrong PIN or WebCrypto unavailable')}$('unlockPin').value='';
+ try{if(pt.length===64)await loadVault({sol:b58encFix(pt)});else await loadVault(JSON.parse(new TextDecoder().decode(pt)))}catch(e){alert('Unlock error: '+e.message)}};
+window.exportKey=()=>{if(!kp&&!ew)return;if(!confirm('Show secrets on screen? Make sure nobody is watching.'))return;const e=$('expOut');e.style.display='block';let t='';if(vault.mnemonic)t+='SEED PHRASE (account #'+vault.idx+'):\n'+vault.mnemonic+'\n\n';if(kp)t+='Solana secret (base58):\n'+b58encFix(kp.secretKey)+'\n\n';if(ew)t+='EVM private key:\n'+ew.privateKey;e.style.whiteSpace='pre-wrap';e.textContent=t};
+window.lockNow=()=>location.reload();
+window.wipe=()=>{if(confirm('Delete saved encrypted wallet from this device? Make sure you have a backup!')){localStorage.removeItem('pw_enc');location.reload()}};
+render();
+}
+</script></body></html>

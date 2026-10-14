@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0d">
+<title>PROMDRAFT · Mass Reply Drafter</title>
+<style>
+:root{--bg:#0b0b0d;--panel:#141418;--panel2:#1b1b21;--line:#2a2a33;--text:#f3efe6;--mute:#9a968c;--gold:#d4af37;--gold2:#f5d77a;--goldd:#8a6d1c;--ok:#4cc38a;--bad:#ff6b6b;--r:16px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.45}
+body{background:radial-gradient(1200px 500px at 50% -200px,rgba(212,175,55,.16),transparent 70%),var(--bg);min-height:100vh;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 14px}
+.brand{font-weight:900;letter-spacing:.06em;font-size:24px;background:linear-gradient(90deg,var(--gold2),var(--gold),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand small{display:block;font-size:12px;letter-spacing:.12em;color:var(--mute);-webkit-text-fill-color:var(--mute);font-weight:600;text-transform:uppercase}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+label.h{display:block;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin-bottom:8px}
+textarea,input[type=text]{width:100%;background:#0e0e12;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px;outline:none;transition:border-color .2s,box-shadow .2s}
+textarea:focus,input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+#links{min-height:150px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{min-height:44px;min-width:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:#1f1f26;color:var(--text);font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;transition:transform .12s,background .2s,border-color .2s}
+.btn:active{transform:scale(.97)}
+.btn:hover{border-color:var(--goldd)}
+.btn.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1405;border-color:var(--gold);box-shadow:0 6px 18px rgba(212,175,55,.25)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.grow{flex:1}
+.note{font-size:13px;color:var(--mute);margin-top:8px;min-height:18px}
+.note b{color:var(--gold2)}
+.bar{position:sticky;top:0;z-index:5;margin:14px -16px;padding:10px 16px;background:rgba(11,11,13,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.counter{font-weight:900;font-size:18px}
+.counter span{color:var(--gold)}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--goldd),var(--gold2));transition:width .4s}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{min-height:44px;padding:0 12px;background:transparent;border:0;color:var(--mute);font:inherit;font-weight:700;cursor:pointer}
+.seg button.on{background:var(--gold);color:#1a1405}
+.acct{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
+.switch{position:relative;width:56px;height:32px;flex:none}
+.switch input{opacity:0;width:100%;height:100%;margin:0;position:absolute;cursor:pointer;z-index:1}
+.switch i{position:absolute;inset:0;background:#26262e;border:1px solid var(--line);border-radius:20px;transition:.2s}
+.switch i:after{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;border-radius:50%;background:var(--mute);transition:.2s}
+.switch input:checked+i{background:rgba(212,175,55,.25);border-color:var(--gold)}
+.switch input:checked+i:after{left:27px;background:var(--gold2)}
+.acct b{color:var(--text)}
+#cards{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.card{position:relative;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--r);padding:14px;transition:opacity .35s,filter .35s,border-color .3s,transform .3s;animation:in .35s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card.done{opacity:.5;filter:grayscale(.8)}
+.card.done .check{display:flex}
+.check{display:none;position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:var(--ok);color:#06140c;font-weight:900;align-items:center;justify-content:center;font-size:18px}
+.chead{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding-right:40px}
+.num{font-weight:900;color:#1a1405;background:var(--gold);border-radius:8px;padding:2px 8px;font-size:13px}
+.handle{font-weight:800;font-size:17px}
+.url{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;color:var(--mute);word-break:break-all;margin-bottom:10px;user-select:all}
+.chip{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gold2);border:1px solid var(--goldd);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.draft{min-height:150px;overflow:hidden;resize:vertical;margin-top:8px;line-height:1.5}
+.meta{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute);margin:6px 0 10px}
+.cc.warn{color:var(--bad);font-weight:800}
+.reply{width:100%;min-height:56px;font-size:18px;margin-top:8px;border-radius:14px}
+.empty{text-align:center;color:var(--mute);padding:30px 10px}
+footer{text-align:center;color:var(--mute);font-size:14px;margin-top:30px}
+footer a{color:var(--gold2);font-weight:800;text-decoration:none;display:inline-flex;min-height:44px;align-items:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);background:var(--gold);color:#1a1405;font-weight:800;padding:12px 18px;border-radius:12px;opacity:0;transition:.25s;z-index:20;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%)}
+#gate{position:fixed;inset:0;z-index:30;background:radial-gradient(600px 400px at 50% 35%,rgba(212,175,55,.22),transparent 70%),#08080a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;transition:opacity .4s}
+#gate h1{font-size:40px;margin:0;font-weight:900;background:linear-gradient(90deg,var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+#gate p{color:var(--mute);margin:0}
+#gate.hide{opacity:0;pointer-events:none}
+.hidden{display:none!important}
+.post{min-height:84px;resize:vertical;font-size:15px;margin-bottom:8px}
+.sub{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:6px 0 4px}
+.two{display:flex;gap:8px}.two .noteIn{flex:1;min-width:0}
+select{min-height:44px;background:#0e0e12;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0 10px;font:inherit;font-size:15px;max-width:44%}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:-2px 0 8px}
+.ask{font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;background:rgba(212,175,55,.12);color:var(--gold2);border:1px solid var(--goldd)}
+.ask.none{background:transparent;color:var(--mute);border-color:var(--line)}
+.flag{font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;background:rgba(255,145,40,.15);color:#ffa34d;border:1px solid #b8641c}
+.appbtn{width:100%;min-height:50px;margin-top:8px;border-color:var(--goldd);color:var(--gold2);background:transparent}
+.card{scroll-margin-top:170px}
+details.help{margin-top:12px;font-size:14px;color:var(--mute)}
+details.help summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--gold2);font-weight:700}
+details.help p{margin:6px 0}
+</style>
+</head>
+<body>
+<div id="gate">
+  <h1>Ready to drop?</h1>
+  <p>Paste the links. Draft. Tap. Done.</p>
+  <button class="btn gold" id="gateGo" style="min-width:200px;min-height:54px;font-size:18px">Let’s go</button>
+</div>
+<div class="wrap">
+  <header>
+    <div class="brand">PROMDRAFT<small>Mass reply drafter for X</small></div>
+    <div class="acct"><span>Acct <b id="acctName">@lonewithin</b></span><label class="switch" title="Switch SOL wallet set to @glorylockedin"><input type="checkbox" id="acct" aria-label="Use @glorylockedin wallets"><i></i></label></div>
+  </header>
+
+  <section class="panel">
+    <label class="h" for="links">Paste X post links (+ post text)</label>
+    <textarea id="links" placeholder="https://x.com/someone/status/123...&#10;Stake $50 giveaway, drop your Stake username&#10;&#10;twitter.com/other/status/456?s=20&#10;Drop your SOL wallet 👇" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="btn gold grow" id="addBtn">Build drafts</button>
+      <button class="btn ghost" id="pasteClear">Clear box</button>
+    </div>
+    <div class="note" id="parseNote"></div>
+    <details class="help"><summary>How it works</summary>
+      <p>Put a post’s text on the lines under its link and it attaches to that card. An ID or wallet goes in <b>only</b> if the post asks for one. If nothing is asked, you just get the heartfelt lines.</p>
+      <p><b>Reply on X</b> opens x.com’s reply box for that exact post with the draft filled in. On a phone with X installed this usually jumps straight into the app.</p>
+      <p><b>Open in X app</b> forces the app (iOS: twitter:// link, Android: an intent for the X app that falls back to the browser). Both buttons also copy the draft, so if the app opens without the text, just long-press and paste.</p>
+      <p>Nothing posts by itself. You tap Post in X every time.</p>
+    </details>
+  </section>
+
+  <div class="bar" id="bar">
+    <div class="row" style="justify-content:space-between">
+      <div class="counter" id="counter"><span>0</span> of 0 done</div>
+      <div class="seg" id="filter"><button data-f="all" class="on">All</button><button data-f="todo">Not done</button><button data-f="done">Done</button></div>
+    </div>
+    <div class="prog"><i id="progI"></i></div>
+    <div class="row">
+      <button class="btn" id="regenAll">↻ Regenerate all</button>
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn danger" id="clearAll">Clear all</button>
+    </div>
+  </div>
+
+  <div id="cards"></div>
+  <div class="empty" id="empty">No cards yet. Paste some links above.</div>
+
+  <footer>Made by Promise <a href="https://x.com/lonewithin" target="_blank" rel="noopener">@lonewithin</a><br>Nothing posts automatically. You tap every Reply yourself.</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var LS="promdraft.v2";
+var ACCOUNTS={
+  lonewithin:["DekmaZvcjTK5f9Au4SA73b4NQUfosDfkYgNhbDieFZKF","FTCWFM5kqVGzsM77H7XcrZbhM5g97vnPg8sB7v5zyRAv","Lone5g43fn1dcDyCbmj6oyGH6L7E1augu7cVVuMzAPC","7LYu4fwUVvd1EDchCvytSdn3QS2aNuksExN6k6WtxWMA","promc8m78KbiUyC8FNptwZjEs95LKMwDnuhyFewGpL7","Loneba5Sw1xrDg2tGw7anhF2W2z2X2y3j9H8X5pTAoh"],
+  glorylockedin:["2ACvNVtM8WfVUm9A4r5mumXHtKBycsXEKzugYa2SmgEF","2xS4RSzj13e1CfNkmh45vfUhXxxZ7ENWpJgxLGXGqy1X","3mvvn7sLrjo8VGNcYUsGA9HnyA4rVg3LGqZawvWLx1MR"]
+};
+var WAL={evm:"0x065d8a85fc75F5075aC98575bc7D52Eff809f862",bnb:"0x918d8bc9a3b60b1e279cd7ee9456c75d3aae5dd7",btc:"12aAgsp9c54UexMTQQtWzGuE9oXSgDFJfr"};
+var TAGS=["@nueldotsol","@ryxxdot","@midedotsol","@bigalamss","@iamhydraszn"];
+var METAWIN_TOP="🆔: Lonewithin";
+
+// ---------- sites & chains ----------
+var SITES=[
+  {k:"stake",label:"Stake",id:"ID: Promiseishere",re:/\bstake(?:\.us|\.com)?\b(?!\s+(?:your|ur|my|some|it|them|sol|eth|tokens?|coins?)\b)/},
+  {k:"yeet",label:"Yeet",id:"ID: Promiseishere",re:/\byeet(?:\.com)?\b/},
+  {k:"roobet",label:"Roobet",id:"ID: lonebrotha",re:/\broobet\b/},
+  {k:"shuffle",label:"Shuffle",id:"ID: lonebrotha",re:/\bshuffle(?:\.com)?\b/},
+  {k:"metawin",label:"MetaWin",id:null,top:true,re:/\bmeta\s?win\b/},
+  {k:"dope",label:"dope.xyz",id:"ID: Lonewithin",re:/\bdope\.xyz\b|\bon\s+dope\b|\bdope\s+(?:id|username|user|uid)\b/},
+  {k:"fortunejack",label:"FortuneJack",id:"ID: Lonewithin",re:/\bfortune\s?jack\b/},
+  {k:"gamdom",label:"Gamdom",id:"ID: OGPROM",re:/\bgamdom\b/},
+  {k:"thrill",label:"Thrill",id:"ID: lonewithin",re:/\bthrill(?:\.com)?\b/},
+  {k:"luckyfun",label:"lucky.fun",id:"ID: lonewithin",re:/\blucky\s?\.?\s?fun\b/},
+  {k:"winna",label:"Winna",id:"ID: lonewithin",re:/\bwinna\b/},
+  {k:"hyperoll",label:"Hyperoll",id:"ID: lonewithin",re:/\bhyper\s?r?oll\b/},
+  {k:"betbolt",label:"Betbolt",id:"ID: lonewithin",re:/\bbet\s?bolt\b/}
+];
+var CHAINS=[
+  {k:"sol",label:"SOL",re:/\b(?:sol|solana|spl)\b/},
+  {k:"evm",label:"EVM",re:/\b(?:eth|ethereum|evm|arbitrum|arb|polygon|matic|erc-?20|optimism)\b|\b(?:on|via)\s+base\b|\bbase\s+(?:chain|wallet|address|addy|addr|network|eth|usdc|ca)\b/},
+  {k:"bnb",label:"BNB",re:/\b(?:bnb|bsc|bep-?20|binance\s+smart\s+chain)\b/},
+  {k:"btc",label:"BTC",re:/\b(?:btc|bitcoin)\b/}
+];
+var OTHER_STRONG={tron:"TRON",trx:"TRON","trc20":"TRON","trc-20":"TRON",sui:"SUI",aptos:"Aptos",cardano:"Cardano",xrp:"XRP",ripple:"XRP",doge:"DOGE",dogecoin:"DOGE",litecoin:"LTC",ltc:"LTC",avax:"AVAX",avalanche:"AVAX",injective:"Injective",cosmos:"Cosmos",hedera:"Hedera",hbar:"Hedera",kaspa:"Kaspa",starknet:"Starknet",algorand:"Algorand",stellar:"Stellar",polkadot:"Polkadot",tezos:"Tezos",hyperliquid:"Hyperliquid",berachain:"Berachain",monad:"Monad"};
+var OTHER_WEAK={ton:"TON",near:"NEAR",dot:"Polkadot",sei:"SEI",apt:"Aptos",atom:"Cosmos",ada:"Cardano",kas:"Kaspa",algo:"Algorand",xlm:"Stellar",inj:"Injective",hype:"Hyperliquid"};
+var OVERRIDES=[["auto","Auto"],["none","None"],["stake","Stake/Yeet ID"],["roobet","Roobet/Shuffle ID"],["metawin","MetaWin 🆔"],["dope","dope.xyz ID"],["fortunejack","FortuneJack ID"],["gamdom","Gamdom ID"],["thrill","Thrill/lucky/Winna/Hyperoll/Betbolt ID"],["generic","Generic ID"],["sol","SOL wallet"],["evm","EVM wallet"],["bnb","BNB wallet"],["btc","BTC wallet"]];
+function siteByKey(k){for(var i=0;i<SITES.length;i++)if(SITES[i].k===k)return SITES[i];}
+
+function firstHit(list,t){var best=null,bi=1e9;list.forEach(function(x){var m=x.re.exec(t);if(m&&m.index<bi){bi=m.index;best=x;}});return best;}
+function otherChain(t){
+  var m,re=/\b([a-z]+(?:-?20)?)\b/g,best=null;
+  var strong=new RegExp("\\b("+Object.keys(OTHER_STRONG).join("|").replace(/-/g,"\\-")+")\\b");
+  if((m=strong.exec(t)))best=OTHER_STRONG[m[1]];
+  var wk=Object.keys(OTHER_WEAK).join("|");
+  var weak=new RegExp("\\$("+wk+")\\b|\\b("+wk+")\\s+(?:wallet|address|addy|addr|chain|network|giveaway|airdrop)\\b");
+  if(!best&&(m=weak.exec(t)))best=OTHER_WEAK[m[1]||m[2]];
+  return best;
+}
+var NUMW={a:1,an:1,one:1,two:2,three:3,four:4,five:5,your:1,ur:1,some:2};
+function tagN(t){
+  var m=t.match(/\btag\s+(\d+|a|an|one|two|three|four|five|your|ur|some)\b(?:\s+(?:of\s+)?(?:your\s+)?(?:friends?|frens?|fren|people|mates|homies|degens|others|buddies|pals))?/);
+  if(!m){if(/\btag\s+(?:friends?|frens?|people|homies|degens)\b/.test(t))return 1;return 0;}
+  var n=/^\d+$/.test(m[1])?parseInt(m[1],10):NUMW[m[1]];
+  if((m[1]==="your"||m[1]==="ur")&&!/\btag\s+(?:your|ur)\s+(?:\w+\s+)?(?:friends?|frens?|fren|people|mates|homies|degens|buddies|pals)\b/.test(t))return 0;
+  return Math.min(5,Math.max(0,n||0));
+}
+var ASK_RE=/\b(?:drop|dropping|comment|reply|leave|share|post|send|type|put|giveaway|giving|gw|winners?|rt|retweet|airdrop|tip|tipping|tips|raffle|free|claim|prize|pool|bonus|race)\b|\$\d/;
+var GW_RE=/\b(?:giveaway|giving\s+away|giving|gw|winners?|airdrop|raffle|prize|tip|tipping|tips|free|claim|rt|retweet|pool|picking|random|bonus|race|enter|chance)\b|\$\d|\b\d+\s?(?:usdc|usdt|sol|eth)\b|\bdrop(?:ping)?\s+(?:your|ur|ya|yo|addy|wallet|address|id|username)\b/;
+var WALLET_RE=/\b(?:wallets?|address|addresses|addy|addie|addys|addr|pubkey)\b|\b(?:drop|comment|leave|send|post|share|put)\s+(?:your\s+|ur\s+|ya\s+|yo\s+)?(?:\w+\s+)?ca\b|\b(?:your|ur)\s+(?:\w+\s+)?ca\b/;
+var ID_RE=/\b(?:usernames?|user\s?names?|uids?|ids?|nick(?:name)?s?|account\s+names?|acc\s+names?|handles?\s+on)\b|🆔/;
+
+function analyze(post,note,ov){
+  var t=(post||"").toLowerCase(),n=(note||"").toLowerCase(),r={top:false,idLine:null,chain:null,flag:null,chips:[],normal:false,tags:0,empty:!t.trim()};
+  r.tags=Math.max(tagN(t),tagN(n));
+  if(ov&&ov!=="auto"){
+    r.giveaway=true;
+    if(ov==="none"){r.chips.push("Override: none");return r;}
+    applyKey(r,ov);r.chips.push("Override: "+label(r));return r;
+  }
+  var site=firstHit(SITES,t),chain=firstHit(CHAINS,t),oth=otherChain(t);
+  var ask=ASK_RE.test(t),idW=ID_RE.test(t),walW=WALLET_RE.test(t);
+  var wantId=idW||(!!site&&ask);
+  var wantW=walW||(!!(chain||oth)&&ask&&!site&&!idW);
+  r.giveaway=GW_RE.test(t)||wantId||wantW||r.tags>0;
+  if(wantId){if(site){if(site.top)r.top=true;else r.idLine=site.id;r.site=site.label;}else{r.idLine="ID: lonewithin";r.site="Generic";}}
+  if(wantW){
+    if(chain)r.chain=chain.k;
+    else if(oth)r.flag="Asks for "+oth+" — add manually";
+    else{r.chain="sol";r.assumed=true;}
+  }
+  // note fallback: explicit site/chain in note when the post asks for nothing
+  if(!r.top&&!r.idLine&&!r.chain&&!r.flag){
+    var ns=firstHit(SITES,n),nc=firstHit(CHAINS,n);
+    if(ns){if(ns.top)r.top=true;else r.idLine=ns.id;r.site=ns.label;r.fromNote=true;}
+    if(nc){r.chain=nc.k;r.fromNote=true;}
+    if(r.fromNote)r.giveaway=true;
+  }
+  r.normal=!r.empty&&!r.giveaway;
+  var l=label(r);
+  if(l)r.chips.push((r.fromNote?"Note: ":"Asked: ")+l);
+  else if(r.flag)r.chips.push("Asked: wallet");
+  else r.chips.push(r.empty?"No post text · nothing attached":r.normal?"Normal post · nothing asked":"Nothing asked");
+  if(r.tags)r.chips.push("Tag "+r.tags);
+  return r;
+}
+function applyKey(r,k){
+  if(k==="generic"){r.idLine="ID: lonewithin";r.site="Generic";return;}
+  if(k==="sol"||k==="evm"||k==="bnb"||k==="btc"){r.chain=k;return;}
+  var s=siteByKey(k);if(s){if(s.top)r.top=true;else r.idLine=s.id;r.site=s.label;}
+}
+function label(r){
+  var p=[];
+  if(r.top||r.idLine)p.push(r.site==="Generic"?"username/ID":r.site+" ID");
+  if(r.chain)p.push((r.chain==="sol"?"SOL":r.chain.toUpperCase())+" wallet"+(r.assumed?" (assumed SOL)":""));
+  return p.join(" + ");
+}
+window.PROM_analyze=analyze;
+
+// ---------- template banks ----------
+var OPEN=["Been here every single day, still believing","Showing up quietly like always","Count me in, humbly","Here again, patient as ever","Locked in, I don’t miss these","Hoping today is finally my turn","Consistency over everything, here again","Been rooting for you since day one","Quiet hands, full heart, still here","Another day, another prayer, still standing","No noise, just faith and patience","Proud dad, patient bagworker, that’s the whole story"];
+var MID=["Patience has carried me this far, it won’t fail me now","Still bagworking, still thankful","Every drop counts when you’re building from the ground up","Even {s} goes a long way in my house","{b} would cover the week for us, no lie","Grinding for my family, one post at a time","Being a father keeps me going on the hard days","Doing it for the people waiting at home","One day the patience pays, maybe today","Keeping my head down and my heart open","The little wins keep a dad smiling","Faith first, bag later","Small win, big blessing for my house","Every blessing here goes straight home","Not the loudest, just the most consistent","Slow and steady, the bag will find me","{b} would mean more than you know right now"];
+var DAUGHTER=["My daughter asked if we’d win today, I told her keep praying","Doing this so my little girl never has to worry","My baby girl is the reason for every single entry","Her smile is the whole reason I keep going","Saving up for my daughter’s school things, every bit helps"];
+var CLOSE=["Thank you for always giving back","Grateful for the chance, win or lose","Appreciate you more than you know","Respect for doing this, truly","Win or not, thank you for the energy","God’s timing is always right","You’ve been a blessing to so many of us","Thank you for thinking of the community","Much love and respect, always","Grateful, today and every day"];
+var NORMAL_A=["Facts, well said","Needed to hear this today","Real talk, appreciate you sharing","This is the energy","Couldn’t agree more","Words from a real one","Love to see it","This made my morning","Big respect for this","Felt this one deep","Straight from the heart, I hear you","You never miss with these","Quiet wins are still wins","Truth, plain and simple","Saving this one"];
+var NORMAL_B=["Patience really is everything","Keep going, it’s paying off","As a dad I felt this one","Staying patient and grateful over here","Slow progress is still progress","God’s timing never fails","Respect the journey","Keep building, the people see you","Proud of the growth, keep pushing","Consistency always wins in the end"];
+var EMOJI=["🙏","💛","🤲","✨","🫡"];
+
+// ---------- state ----------
+function load(){
+  try{var s=JSON.parse(localStorage.getItem(LS));if(s&&s.cards)return s;}catch(e){}
+  var s2={cards:[],acct:"lonewithin",rot:{lonewithin:0,glorylockedin:0},tagRot:0,filter:"all",lineUse:{}};
+  try{var v1=JSON.parse(localStorage.getItem("promdraft.v1"));if(v1){if(v1.rot)s2.rot=v1.rot;s2.tagRot=v1.tagRot||0;s2.acct=v1.acct||s2.acct;
+    (v1.cards||[]).forEach(function(c){s2.cards.push({id:c.id,handle:c.handle,note:c.note||"",post:"",ov:"auto",done:!!c.done,draft:c.draft,legacy:true});});}}catch(e){}
+  return s2;
+}
+var S=load();
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+if(!S.rot)S.rot={lonewithin:0,glorylockedin:0};if(!S.lineUse)S.lineUse={};
+
+// ---------- parsing ----------
+var RE=/(?:https?:\/\/)?(?:www\.|mobile\.|m\.)?(?:x|twitter)\.com\/(?:i(?:\/web)?|([A-Za-z0-9_]{1,15}))\/status(?:es)?\/(\d{5,25})[^\s,]*/ig;
+function parseLinks(txt){
+  var out=[],byId={},junk=0,dup=0,cur=null,orphan=0;
+  txt.split(/\r?\n/).forEach(function(line){
+    var found=[],m;RE.lastIndex=0;
+    while((m=RE.exec(line))){var h=m[1]||"",id=m[2];found.push({h:h,id:id,s:m.index,e:m.index+m[0].length});}
+    var rest=line;
+    for(var i=found.length-1;i>=0;i--)rest=rest.slice(0,found[i].s)+" "+rest.slice(found[i].e);
+    rest=rest.replace(/^[\s,;|>\-–—]+|[\s,;|]+$/g,"");
+    found.forEach(function(f){
+      if(byId[f.id]){dup++;cur=byId[f.id];return;}
+      var it={id:f.id,handle:f.h,text:[]};byId[f.id]=it;out.push(it);cur=it;
+    });
+    if(!rest)return;
+    var only=rest.split(/[\s,]+/).filter(Boolean);
+    var urlsOnly=only.every(function(tk){return /^(?:https?:\/\/|www\.|(?:mobile\.)?(?:x|twitter)\.com\/)/i.test(tk);});
+    if(urlsOnly){junk+=only.length;return;}
+    if(cur)cur.text.push(rest);else{junk++;orphan++;}
+  });
+  out.forEach(function(it){it.text=it.text.join("\n").trim();});
+  return {items:out,junk:junk,dup:dup};
+}
+window.PROM_parse=parseLinks;
+
+// ---------- wallets ----------
+function solNeighbors(card){
+  var idx=S.cards.indexOf(card),nb=[];
+  for(var i=idx-1;i>=0;i--){if(S.cards[i].att&&S.cards[i].att.chain==="sol"&&S.cards[i].sol){nb.push(S.cards[i].sol);break;}}
+  for(var j=idx+1;j<S.cards.length;j++){if(S.cards[j].att&&S.cards[j].att.chain==="sol"&&S.cards[j].sol){nb.push(S.cards[j].sol);break;}}
+  return nb;
+}
+function nextSol(card){
+  var list=ACCOUNTS[S.acct],n=list.length,nb=solNeighbors(card),w,t=0;
+  do{w=list[S.rot[S.acct]%n];S.rot[S.acct]=(S.rot[S.acct]+1)%n;t++;}while(nb.indexOf(w)>=0&&t<n);
+  return w;
+}
+function walletOf(c){var ch=c.att&&c.att.chain;if(!ch)return null;if(ch==="sol")return c.sol;return WAL[ch];}
+
+// ---------- generator ----------
+function pickLeast(arr,used,excl){
+  var cands=arr.filter(function(l){return excl.indexOf(l)<0;}),min=Infinity;
+  cands.forEach(function(l){var u=used[l]||0;if(u<min)min=u;});
+  var pool=cands.filter(function(l){return (used[l]||0)<=min;});
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function prizeAmt(s){var m=(s||"").match(/\$\s?(\d[\d,]*)/);return m?"$"+m[1].replace(/,/g,""):null;}
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function genLines(c){
+  var used=S.lineUse,raw=[],lines;
+  if(c.att.normal){
+    raw.push(pickLeast(NORMAL_A,used,[]));
+    if(Math.random()<0.6)raw.push(pickLeast(NORMAL_B,used,raw));
+  } else {
+    var total=2+Math.floor(Math.random()*3);
+    raw.push(pickLeast(OPEN,used,[]));
+    var useD=Math.random()<0.18;
+    for(var i=0;i<total-2;i++)raw.push(useD&&i===0?pickLeast(DAUGHTER,used,raw):pickLeast(MID,used,raw));
+    raw.push(pickLeast(CLOSE,used,raw));
+  }
+  var p=prizeAmt(c.post)||prizeAmt(c.note);
+  lines=raw.map(function(l){used[l]=(used[l]||0)+1;return l.replace("{s}",p||rnd(["$10","$20"])).replace("{b}",p||rnd(["$50","$100"]));});
+  if(!c.att.top&&Math.random()<0.35){var k=Math.floor(Math.random()*lines.length);lines[k]+=" "+rnd(EMOJI);}
+  return lines;
+}
+function pieces(c){
+  var tail=[];if(c.att.idLine)tail.push(c.att.idLine);var w=walletOf(c);if(w)tail.push(w);
+  return {top:c.att.top?METAWIN_TOP:null,tag:c.tags&&c.tags.length?"Tagging "+c.tags.join(" "):null,tail:tail};
+}
+function compose(c){
+  var p=pieces(c),parts=[];
+  if(p.top)parts.push(p.top);
+  parts.push(c.lines.join("\n\n"));
+  if(p.tag)parts.push(p.tag);
+  if(p.tail.length)parts.push(p.tail.join("\n"));
+  return parts.join("\n\n");
+}
+function body(c){return c.lines.join("\n\n");}
+function generate(c){
+  var others={};S.cards.forEach(function(o){if(o!==c&&o.lines)others[body(o)]=1;});
+  var prev=c.lines?body(c):null,t=0;
+  do{c.lines=genLines(c);t++;}while((others[body(c)]||body(c)===prev)&&t<40);
+  c.draft=compose(c);c.edited=false;
+}
+function assignTags(c){
+  var n=c.att.tags;
+  if(c.tags&&c.tags.length===n)return;
+  c.tags=[];for(var i=0;i<n;i++)c.tags.push(TAGS[(S.tagRot+i)%TAGS.length]);
+  if(n)S.tagRot=(S.tagRot+n)%TAGS.length;
+}
+// (re)analyse a card; keeps lines if kind unchanged & keepLines
+function refreshAtt(c,regen){
+  var old=c.att?pieces(c):null,oldNormal=c.att?c.att.normal:null;
+  c.att=analyze(c.post,c.note,c.ov);
+  if(c.att.chain==="sol"){if(!c.sol||c.solAcct!==S.acct){c.sol=null;c.sol=nextSol(c);c.solAcct=S.acct;}}
+  assignTags(c);
+  if(regen||!c.lines||oldNormal!==c.att.normal){generate(c);return;}
+  if(!c.edited){c.draft=compose(c);return;}
+  // user edited: strip old attachment lines, then re-add new ones
+  var rm={};if(old){if(old.top)rm[old.top]=1;if(old.tag)rm[old.tag]=1;old.tail.forEach(function(x){rm[x]=1;});}
+  var t=c.draft.split("\n").filter(function(l){return !rm[l.trim()];}).join("\n").replace(/\n{3,}/g,"\n\n").trim();
+  var p=pieces(c),parts=[];if(p.top)parts.push(p.top);parts.push(t);if(p.tag)parts.push(p.tag);if(p.tail.length)parts.push(p.tail.join("\n"));
+  c.draft=parts.join("\n\n");
+}
+
+// ---------- links ----------
+function platform(){var ua=navigator.userAgent||"";if(/iPhone|iPad|iPod/i.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1))return "ios";if(/Android/i.test(ua))return "android";return "desktop";}
+var PLAT=platform();
+function intent(c){return "https://x.com/intent/post?in_reply_to="+c.id+"&text="+encodeURIComponent(c.draft);}
+function appHref(c,plat){
+  plat=plat||PLAT;var t=encodeURIComponent(c.draft);
+  if(plat==="ios")return "twitter://post?message="+t+"&in_reply_to_status_id="+c.id;
+  if(plat==="android")return "intent://x.com/intent/post?in_reply_to="+c.id+"&text="+t+"#Intent;scheme=https;package=com.twitter.android;S.browser_fallback_url="+encodeURIComponent(intent(c))+";end";
+  return intent(c);
+}
+window.PROM_appHref=function(id,plat){return appHref(find(id),plat);};
+function postUrl(c){return "https://x.com/"+(c.handle||"i/web")+"/status/"+c.id;}
+function xLen(s){var n=0;for(var ch of s){var cp=ch.codePointAt(0);n+=(cp>0x10FF&&!(cp>=0x2000&&cp<=0x206F))?2:1;}return n;}
+function esc(s){return String(s).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];});}
+var toastT;function toast(m){var t=document.getElementById("toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on");},1600);}
+function copy(text,msg){
+  function fb(){var ta=document.createElement("textarea");ta.value=text;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,text.length);try{document.execCommand("copy");toast(msg||"Copied");}catch(e){toast("Copy failed");}ta.remove();}
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(function(){toast(msg||"Copied");},fb);}else fb();
+}
+
+// ---------- render ----------
+var cardsEl=document.getElementById("cards");
+var appLabel=PLAT==="ios"?"Open in X app (iOS)":PLAT==="android"?"Open in X app (Android)":"Open in X app";
+function cardHTML(c,i){
+  var opts=OVERRIDES.map(function(o){return '<option value="'+o[0]+'"'+(c.ov===o[0]?" selected":"")+'>'+esc(o[1])+'</option>';}).join("");
+  return '<div class="card'+(c.done?' done':'')+'" data-id="'+c.id+'">'+
+  '<div class="check">✓</div>'+
+  '<div class="chead"><span class="num">#'+(i+1)+'</span><span class="handle">'+(c.handle?'@'+esc(c.handle):'(no handle)')+'</span></div>'+
+  '<div class="chips"></div>'+
+  '<div class="url">'+esc(postUrl(c))+'</div>'+
+  '<div class="sub">Post text</div>'+
+  '<textarea class="post" placeholder="Paste the post’s text (or key line) here" aria-label="Post text">'+esc(c.post||"")+'</textarea>'+
+  '<div class="two"><input type="text" class="noteIn" placeholder="Note: host / prize / site / chain" value="'+esc(c.note||"")+'" aria-label="Note"><select class="ov" aria-label="Attachment override">'+opts+'</select></div>'+
+  '<textarea class="draft" spellcheck="true" aria-label="Draft">'+esc(c.draft)+'</textarea>'+
+  '<div class="meta"><span class="wsrc"></span><span class="cc"></span></div>'+
+  '<div class="row"><button class="btn copy">Copy</button><button class="btn regen">↻ Regenerate</button><a class="btn ghost open" target="_blank" rel="noopener" href="'+esc(postUrl(c))+'">Open post</a><button class="btn ghost undo">'+(c.done?'Undo':'Mark done')+'</button></div>'+
+  '<a class="btn gold reply" target="_blank" rel="noopener" href="'+esc(intent(c))+'">Reply on X</a>'+
+  '<a class="btn appbtn" href="'+esc(appHref(c))+'"'+(PLAT==="desktop"?' target="_blank" rel="noopener"':'')+'>'+appLabel+'</a>'+
+  '</div>';
+}
+function render(){
+  cardsEl.innerHTML=S.cards.map(cardHTML).join("");
+  Array.prototype.forEach.call(cardsEl.children,function(el){updateMeta(el,find(el.dataset.id));});
+  stats();applyFilter();
+}
+function find(id){for(var i=0;i<S.cards.length;i++)if(S.cards[i].id===id)return S.cards[i];}
+function elOf(c){return cardsEl.querySelector('.card[data-id="'+c.id+'"]');}
+function updateMeta(el,c){
+  var n=xLen(c.draft),cc=el.querySelector(".cc");
+  cc.textContent=n+" / 280";cc.classList.toggle("warn",n>280);
+  grow(el.querySelector(".draft"));
+  el.querySelector(".reply").href=intent(c);
+  el.querySelector(".appbtn").href=appHref(c);
+  var h=c.att.chips.map(function(x,i){return '<span class="ask'+(i===0&&!(c.att.top||c.att.idLine||c.att.chain)?' none':'')+'">'+esc(x)+'</span>';}).join("");
+  if(c.att.flag)h+='<span class="flag">'+esc(c.att.flag)+'</span>';
+  el.querySelector(".chips").innerHTML=h;
+  el.querySelector(".wsrc").textContent=c.att.chain==="sol"?"SOL · @"+c.solAcct:"";
+}
+function grow(ta){ta.style.height="auto";ta.style.height=Math.max(150,ta.scrollHeight+2)+"px";}
+function refreshCard(c){var el=elOf(c);if(!el)return;el.querySelector(".draft").value=c.draft;updateMeta(el,c);}
+function stats(){
+  var n=S.cards.length,d=S.cards.filter(function(c){return c.done;}).length;
+  document.getElementById("counter").innerHTML="<span>"+d+"</span> of "+n+" done";
+  document.getElementById("progI").style.width=n?(d/n*100)+"%":"0";
+  document.getElementById("empty").classList.toggle("hidden",n>0);
+  document.getElementById("bar").classList.toggle("hidden",n===0);
+}
+function applyFilter(){
+  Array.prototype.forEach.call(document.querySelectorAll("#filter button"),function(b){b.classList.toggle("on",b.dataset.f===S.filter);});
+  Array.prototype.forEach.call(cardsEl.children,function(el){var c=find(el.dataset.id);el.classList.toggle("hidden",(S.filter==="done"&&!c.done)||(S.filter==="todo"&&c.done));});
+}
+function setDone(c,v){c.done=v;var el=elOf(c);el.classList.toggle("done",v);el.querySelector(".undo").textContent=v?"Undo":"Mark done";save();stats();if(S.filter!=="all")setTimeout(applyFilter,350);}
+
+// ---------- events ----------
+document.getElementById("addBtn").addEventListener("click",function(){
+  var ta=document.getElementById("links"),r=parseLinks(ta.value),added=0,already=0;
+  r.items.forEach(function(it){
+    var ex=find(it.id);
+    if(ex){already++;if(it.text&&!ex.post){ex.post=it.text;refreshAtt(ex,true);}return;}
+    var c={id:it.id,handle:it.handle,note:"",post:it.text,ov:"auto",done:false,tags:[]};
+    S.cards.push(c);refreshAtt(c,true);added++;
+  });
+  var withText=r.items.filter(function(x){return x.text;}).length;
+  var msg="<b>"+added+"</b> card"+(added===1?"":"s")+" added";
+  if(withText)msg+=" · "+withText+" with post text";
+  if(r.dup)msg+=" · "+r.dup+" duplicate"+(r.dup===1?"":"s")+" merged";
+  if(already)msg+=" · "+already+" already in list";
+  if(r.junk)msg+=" · ignored "+r.junk+" non-status item"+(r.junk===1?"":"s");
+  document.getElementById("parseNote").innerHTML=msg;
+  if(added||already)ta.value="";
+  save();render();
+});
+document.getElementById("pasteClear").addEventListener("click",function(){document.getElementById("links").value="";document.getElementById("parseNote").textContent="";});
+cardsEl.addEventListener("click",function(e){
+  var el=e.target.closest(".card");if(!el)return;var c=find(el.dataset.id);
+  var a=e.target.closest(".reply,.appbtn");
+  if(a){a.href=a.classList.contains("reply")?intent(c):appHref(c);copy(c.draft,"Draft copied, paste if needed");setDone(c,true);return;}
+  if(e.target.closest(".copy")){copy(c.draft);return;}
+  if(e.target.closest(".regen")){generate(c);refreshCard(c);save();toast("Fresh draft");return;}
+  if(e.target.closest(".undo")){setDone(c,!c.done);return;}
+});
+var deb={};
+cardsEl.addEventListener("input",function(e){
+  var el=e.target.closest(".card");if(!el)return;var c=find(el.dataset.id);
+  if(e.target.classList.contains("draft")){c.draft=e.target.value;c.edited=true;updateMeta(el,c);save();}
+  if(e.target.classList.contains("noteIn")){c.note=e.target.value;save();}
+  if(e.target.classList.contains("post")){c.post=e.target.value;save();clearTimeout(deb[c.id]);deb[c.id]=setTimeout(function(){refreshAtt(c,false);refreshCard(c);save();},700);}
+});
+cardsEl.addEventListener("change",function(e){
+  var el=e.target.closest(".card");if(!el)return;var c=find(el.dataset.id);
+  if(e.target.classList.contains("ov")){c.ov=e.target.value;}
+  else if(!e.target.classList.contains("noteIn")&&!e.target.classList.contains("post"))return;
+  clearTimeout(deb[c.id]);refreshAtt(c,false);refreshCard(c);save();
+});
+window.PROM_set=function(id,o){var c=find(id),el=elOf(c);if("post" in o){c.post=o.post;el.querySelector(".post").value=o.post;}if("note" in o){c.note=o.note;el.querySelector(".noteIn").value=o.note;}if("ov" in o){c.ov=o.ov;el.querySelector(".ov").value=o.ov;}refreshAtt(c,false);refreshCard(c);save();return c.draft;};
+document.getElementById("regenAll").addEventListener("click",function(){S.cards.forEach(function(c){if(!c.done)generate(c);});S.cards.forEach(refreshCard);save();toast("All drafts refreshed");});
+document.getElementById("clearAll").addEventListener("click",function(){if(!S.cards.length||!confirm("Clear all "+S.cards.length+" cards?"))return;S.cards=[];save();render();document.getElementById("parseNote").textContent="";});
+document.getElementById("filter").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;S.filter=b.dataset.f;save();applyFilter();});
+document.getElementById("exportBtn").addEventListener("click",function(){
+  var txt=S.cards.map(function(c,i){return "#"+(i+1)+(c.done?" [DONE]":"")+"\n"+postUrl(c)+"\n\n"+c.draft;}).join("\n\n------------------------------\n\n");
+  copy(txt,"Export copied");
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain"}));a.download="promdraft-"+new Date().toISOString().slice(0,10)+".txt";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+});
+var acctEl=document.getElementById("acct");acctEl.checked=S.acct==="glorylockedin";
+function showAcct(){document.getElementById("acctName").textContent="@"+S.acct;}
+acctEl.addEventListener("change",function(){
+  S.acct=acctEl.checked?"glorylockedin":"lonewithin";showAcct();
+  S.cards.forEach(function(c){if(!c.done&&c.att.chain==="sol")c.sol=null;});
+  S.cards.forEach(function(c){if(!c.done&&c.att.chain==="sol"){var old=c.draft,ow=old.split("\n");c.sol=nextSol(c);c.solAcct=S.acct;
+    if(c.edited){var oldW=null;Object.keys(ACCOUNTS).forEach(function(k){ACCOUNTS[k].forEach(function(w){if(old.indexOf(w)>=0)oldW=w;});});c.draft=oldW?old.replace(oldW,c.sol):old+"\n"+c.sol;}else c.draft=compose(c);refreshCard(c);}});
+  save();toast("SOL wallets: @"+S.acct);
+});
+showAcct();
+// migrate legacy v1 cards
+S.cards.forEach(function(c){if(c.legacy||!c.att){delete c.legacy;var d=c.draft;refreshAtt(c,true);}});save();
+var gate=document.getElementById("gate");
+if(sessionStorage.getItem("promdraft.gate")){gate.classList.add("hide");gate.style.display="none";}
+document.getElementById("gateGo").addEventListener("click",function(){sessionStorage.setItem("promdraft.gate","1");gate.classList.add("hide");setTimeout(function(){gate.style.display="none";},400);});
+render();
+})();
+</script>
+</body>
+</html>
