@@ -105,9 +105,9 @@ footer{padding:50px 0 60px;color:var(--mut);font-size:13px}footer .w{display:fle
 <h1 class="d rv"><span class="g">Tools that run</span> <span class="s">anywhere.</span></h1>
 <p class="lead rv">I'm <strong>Promise</strong>, a Solana degen and giveaway hunter who builds his own tools: a fitness PWA, peer-to-peer chat, self-custody wallets and X utilities. <strong>No servers. Every one is live.</strong></p>
 <div class="acts rv"><a class="cta" href="#work">Explore the work →</a><a class="cta ghost" href="#contact">Get in touch</a></div>
-<div class="stats rv"><div><b>7</b><small>Shipped tools</small></div><div><b>0</b><small>Servers</small></div><div><b>Mobile</b><small>Ready</small></div><div><b>100%</b><small>Client-side</small></div></div></header>
+<div class="stats rv"><div><b>9</b><small>Shipped tools</small></div><div><b>0</b><small>Servers</small></div><div><b>Mobile</b><small>Ready</small></div><div><b>100%</b><small>Client-side</small></div></div></header>
 <div class="mq" id="stack" aria-label="Tech stack"><div></div></div>
-<section id="work"><div class="w"><div class="rv"><div class="eyebrow">Selected work</div><h2 class="d">Proof of work, not promises.</h2><p class="sub">Seven shipped products. Open any one for the case study, or try it live.</p></div><div class="bento" id="bento"></div></div></section>
+<section id="work"><div class="w"><div class="rv"><div class="eyebrow">Selected work</div><h2 class="d">Proof of work, not promises.</h2><p class="sub">Nine shipped products. Open any one for the case study, or try it live.</p></div><div class="bento" id="bento"></div></div></section>
 <section id="contact"><div class="w"><div class="contact rv"><div class="eyebrow">Contact</div><h2 class="d">Let's build the next one.</h2><p class="sub">Got an idea for a wallet tool, a giveaway kit or an app for your phone? Message me.</p>
 <div class="links"><a class="lk" href="https://x.com/promiseishere" target="_blank" rel="noopener"><small>X · main</small><b>@promiseishere</b></a><a class="lk" href="https://t.me/lonewithin" target="_blank" rel="noopener"><small>Telegram</small><b>@lonewithin</b></a><a class="lk" href="https://x.com/lonewithin" target="_blank" rel="noopener"><small>Also on X</small><b>@lonewithin</b></a><a class="lk" href="https://github.com/lonewithin" target="_blank" rel="noopener"><small>GitHub</small><b>lonewithin</b></a></div></div></div></section>
 </main>
@@ -121,7 +121,7 @@ const P=[
  stack:['HTML/CSS/JS','Geolocation','Speech Synthesis','Wake Lock','Service Worker','SVG animation']},
 {id:'promchat',t:'PROMCHAT',k:'Private chat',s:'Peer-to-peer chat, calls and files. No server, no account.',img:'promchat.jpg',url:'apps/promchat.html',
  prob:'Chat apps store your messages, contacts and data on someone else\'s server.',
- build:['Messages, photos, voice notes, calls and files go straight between browsers','Groups of up to 5','Encrypted end to end (WebRTC DTLS), with no history and no cookies','Blurs when you switch apps, and pictures carry a watermark'],stack:['WebRTC','DTLS','JavaScript']},
+ build:['Messages, photos, voice notes, calls and files go straight between browsers','Groups of up to 5','Encrypted end to end (WebRTC DTLS), with no history and no cookies','Blurs when you switch apps, and pictures carry a watermark'],stack:['WebRTC','DTLS','JavaScript'],code:'https://github.com/lonewithin/promchat'},
 {id:'solkit',t:'SOLKIT',k:'Solana · offline',s:'Vanity Solana addresses, ground entirely on your device.',img:'solkit.jpg',url:'apps/solkit.html',
  prob:'Vanity address sites ask you to trust a server with your secret key.',
  build:['A single file that works with no connection','Grinds for the prefix or suffix you choose','Each match is checked against its secret before it\'s shown','Keys never leave the device and nothing is uploaded'],stack:['Ed25519','Base58','JavaScript']},
@@ -134,6 +134,12 @@ const P=[
 {id:'unfollow',wide:1,t:'Unfollow Helper',k:'X utility',s:'See who doesn\'t follow back, with no bots and no login.',img:'unfollow.jpg',url:'apps/unfollow.html',
  prob:'Finding who doesn\'t follow back usually means risky bots or giving an app your X login.',
  build:['Import your official X data archive (following.js / follower.js) or paste handles','Lists who isn\'t following back, plus fans you don\'t follow','You open each profile and unfollow yourself, then tick Done','Makes no network calls and automates nothing on X'],stack:['JavaScript','FileReader','localStorage']},
+{id:'workoutv2',t:'Promise Workout v2',k:'React + Vite rebuild',s:'The workout app rebuilt as a multi-file React project.',img:'workout-v2.jpg',url:'https://promise-workout-v2.vercel.app',code:'https://github.com/lonewithin/promise-workout-v2',
+ prob:'A single huge HTML file gets hard to grow and maintain.',
+ build:['Rebuilt in React + Vite as a proper multi-file codebase','Installable PWA with a generated service worker for offline use','Pushing to GitHub auto-deploys it to Vercel'],stack:['React','Vite','PWA','Workbox','Vercel']},
+{id:'pricebot',t:'@PriceAndPricesBot',k:'Telegram bot',s:'Crypto prices, conversions and Solana info inside Telegram.',img:'pricebot.jpg',url:'https://t.me/PriceAndPricesBot',lab:'Open in Telegram',code:'https://github.com/lonewithin/priceandprices-bot',
+ prob:'Checking prices, Naira rates and Solana balances meant switching between several apps.',
+ build:['/price for coin prices and /convert for USD ⇄ NGN','/top and /trending coin lists','/sol to check a Solana wallet balance','/news for Solana headlines','Inline $coin lookups in chat'],stack:['Node.js','Telegram Bot API','Solana']},
 {id:'prompack',t:'PROMPACK',k:'Bundle',s:'SOLKIT, PROMCHAT and PROMWALLET in one file.',img:'prompack.jpg',url:'apps/prompack.html',
  prob:'Three tools meant three files to keep track of.',build:['One home screen that opens all three apps','A single file you can carry anywhere, and it works offline'],stack:['Single file','Offline']}];
 const ext=u=>u.startsWith('http')?' target="_blank" rel="noopener"':'';
@@ -145,7 +151,7 @@ P.forEach((p,i)=>{let el;
  B.append(el)});
 const dlg=document.getElementById('dlg');
 document.addEventListener('click',e=>{const t=e.target.closest('[data-i]');if(!t)return;const p=P[t.dataset.i];
- document.getElementById('mb').innerHTML=`<div class="tagl">${p.k}</div><h3 id="mt">${p.t}</h3><p>${p.s}</p><h4>The problem</h4><p>${p.prob}</p><h4>The build</h4><ul>${p.build.map(x=>`<li>${x}</li>`).join('')}</ul><h4>Stack</h4><div class="pills">${p.stack.map(x=>`<span>${x}</span>`).join('')}</div><a class="cta" href="${p.url}"${ext(p.url)}>${p.lab||'Try it live'} →</a>`;
+ document.getElementById('mb').innerHTML=`<div class="tagl">${p.k}</div><h3 id="mt">${p.t}</h3><p>${p.s}</p><h4>The problem</h4><p>${p.prob}</p><h4>The build</h4><ul>${p.build.map(x=>`<li>${x}</li>`).join('')}</ul><h4>Stack</h4><div class="pills">${p.stack.map(x=>`<span>${x}</span>`).join('')}</div><div class="btnrow"><a class="cta" href="${p.url}"${ext(p.url)}>${p.lab||'Try it live'} →</a>${p.code?`<a class="cta ghost" href="${p.code}" target="_blank" rel="noopener">View code</a>`:''}</div>`;
  document.getElementById('ms').innerHTML=phone(p.img);dlg.showModal()});
 dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
 const S=['HTML','CSS','JavaScript','PWA','Service Workers','Geolocation API','Speech Synthesis','Wake Lock','WebRTC','Solana web3','ethers / EVM','Ed25519','Web Crypto','SVG Animation','Netlify','Vercel'];
