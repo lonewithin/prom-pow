@@ -1,37 +1,160 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Promise (PROM) · Proof of Work</title><meta name="description" content="Promise (PROM, @promiseishere): Nigeria-based builder. Fitness PWA, P2P chat, Solana wallet tools and X giveaway kits."><meta name="theme-color" content="#f5f6fb"><link rel="icon" href="assets/icon.png"><link rel="apple-touch-icon" href="assets/icon.png">
-<style>*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth}body{background:#f5f6fb;color:#0b0d1a;font:16px/1.55 Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit}.w{max-width:1100px;margin:auto;padding:0 20px}
-nav{position:sticky;top:0;z-index:9;background:#f5f6fbdd;backdrop-filter:blur(12px)}nav .w{display:flex;justify-content:space-between;align-items:center;height:64px}.logo{font-weight:900;font-size:20px;display:flex;gap:8px;align-items:center;text-decoration:none}.logo i{width:14px;height:14px;border-radius:50%;background:#0b0d1a;box-shadow:inset -4px -3px 0 #4b3bff}nav a.l{margin-left:22px;font-size:14px;text-decoration:none;color:#444}
-.pill{display:inline-flex;gap:7px;align-items:center;font-size:12px;font-weight:700;padding:5px 11px;border:1px solid #0002;border-radius:99px;background:#fff}.pill i{width:7px;height:7px;border-radius:50%;background:#22c55e}
-.hero{padding:70px 0 60px;border-bottom:1px solid #0001}h1{font-size:clamp(44px,9vw,92px);line-height:.98;letter-spacing:-.045em;font-weight:900;margin:22px 0}h1 em{font-style:normal;color:#4b3bff}.lead{max-width:600px;color:#555;font-size:18px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:99px;font-weight:800;text-decoration:none;font-size:15px;border:1.5px solid #0b0d1a;background:#0b0d1a;color:#fff;cursor:pointer}.btn.o{background:transparent;color:#0b0d1a}.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
-section{padding:70px 0;border-bottom:1px solid #0001}h2{font-size:clamp(32px,6vw,50px);letter-spacing:-.035em;font-weight:900;margin-bottom:26px}.hd{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:6px}.hd small{color:#666;margin-bottom:30px}
-.g4{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.box{background:#fff;border:1px solid #0001;border-radius:18px;padding:22px}.box h4{font-size:17px;margin-bottom:8px}.box p{color:#555;font-size:14px}
-.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))}.fc{perspective:1400px;min-height:560px}.in{position:relative;height:100%;transition:transform .7s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}.fc.on .in{transform:rotateY(180deg)}
-.fr,.bk{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;padding:22px;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;overflow:hidden}.bk{transform:rotateY(180deg);background:#fff;color:#0b0d1a;border:1px solid #0002;overflow:auto}
-.fr .pill{align-self:flex-start;background:transparent;border-color:currentColor;color:inherit;opacity:.85}.fr img{width:100%;height:250px;object-fit:cover;object-position:top;border-radius:14px;margin:16px 0;box-shadow:0 12px 30px #0003}.fr h3{font-size:34px;letter-spacing:-.03em;line-height:1;font-weight:900}.fr p{opacity:.8;margin:8px 0 12px}
-.tags{display:flex;flex-wrap:wrap;gap:6px}.tags span{font-size:12px;padding:3px 10px;border:1px solid currentColor;border-radius:99px;opacity:.75}.flip{margin-top:auto;align-self:flex-start;border:0;background:none;color:inherit;font:inherit;font-weight:800;font-size:14px;cursor:pointer;padding-top:14px}
-.bk b{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#4b3bff;margin-top:6px}.bk p{color:#444;font-size:15px;margin:6px 0 14px}.row{margin-top:auto;display:flex;justify-content:space-between;align-items:center}.go{background:#0b0d1a;color:#fff;padding:11px 18px;border-radius:99px;text-decoration:none;font-weight:800;font-size:14px}.row .flip{padding:0;margin:0;align-self:center}
-.dash{border:2px dashed #0003;border-radius:24px;padding:26px;display:flex;flex-direction:column;justify-content:center;min-height:300px}.dash h3{font-size:34px;letter-spacing:-.03em;line-height:1.05;margin:12px 0}
-.ph{color:#b45309;background:#fff7ed;border:1px dashed #f59e0b;border-radius:8px;padding:2px 8px;font-weight:700;font-size:14px}.stat b{font-size:40px;letter-spacing:-.03em;display:block}.n{width:30px;height:30px;border-radius:50%;background:#0b0d1a;color:#fff;display:grid;place-items:center;font-weight:800;margin-bottom:14px}
-.vid{border-radius:24px;overflow:hidden;background:#0b0d1a;display:grid;grid-template-columns:1fr 1.2fr;align-items:center;color:#fff;margin-top:16px}.vid video{width:100%;max-height:520px;object-fit:cover}.vid div{padding:28px}.vid h3{font-size:30px;letter-spacing:-.03em}.vid p{opacity:.75;margin:8px 0 18px}
-.cta{background:#0b0d1a;color:#fff;border-radius:30px;padding:48px 34px;position:relative;overflow:hidden}.cta:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#4b3bff;right:-70px;top:-90px}.cta h2{max-width:560px;position:relative;z-index:1}.cta p{opacity:.75;max-width:520px}.big{font-size:clamp(32px,7vw,54px);font-weight:900;letter-spacing:-.03em;margin:22px 0 4px;display:inline-block;border-bottom:4px solid #4b3bff}.cta .btn{background:#fff;color:#0b0d1a;border-color:#fff}.cta .btn.o{background:transparent;color:#fff;border-color:#fff5}
-footer .w{display:flex;justify-content:space-between;padding:28px 20px 50px;font-size:13px;color:#666;flex-wrap:wrap;gap:8px}
-@media(max-width:640px){nav a.l{display:none}nav a.l:last-child{display:inline}.vid{grid-template-columns:1fr}.fc{min-height:590px}}</style></head><body>
-<nav><div class="w"><a class="logo" href="#top"><i></i>Promise</a><div><a class="l" href="#build">What I build</a><a class="l" href="#work">Work</a><a class="l" href="#about">About</a><a class="l" href="#contact">Contact</a></div></div></nav>
-<main id="top"><div class="w hero"><span class="pill"><i></i>Building from Nigeria 🇳🇬</span><h1>Tools I needed,<br>so I <em>built them.</em></h1><p class="lead">I'm Promise (PROM), a Solana degen and giveaway hunter who builds his own tools. Fitness, private chat, wallets and X giveaway kits. Each one runs in the browser with no server, and every one below is live.</p><div class="btns"><a class="btn" href="https://x.com/promiseishere" target="_blank" rel="noopener">𝕏 Message @promiseishere</a><a class="btn o" href="#work">See the work</a></div></div>
-<section id="build"><div class="w"><h2>What I build</h2><div class="g4"><div class="box"><h4>Solana &amp; wallet tools</h4><p>Vanity address grinders and self-custody wallets that keep keys on your device.</p></div><div class="box"><h4>Giveaway &amp; X tools</h4><p>Trackers, reply drafters and kits that make hunting giveaways faster and more organized.</p></div><div class="box"><h4>Private apps</h4><p>Peer-to-peer chat with calls and files, encrypted end to end, with no account and no server.</p></div><div class="box"><h4>Installable PWAs</h4><p>Apps that go on your home screen, work offline and use your phone's GPS, voice and screen.</p></div></div></div></section>
-<section id="work"><div class="w"><div class="hd"><h2>Proof of work</h2><small>Tap a card to flip it and see the problem and the build.</small></div><div class="cards"><div class="fc" style="--bg:#4b3bff;--fg:#fff"><div class="in"><div class="fr"><span class="pill"><i></i>Live · Fitness PWA</span><img src="assets/workout.jpg" alt="Promise Workout screenshot" loading="lazy"><h3>Promise Workout</h3><p>A beginner-friendly fat-loss coach that runs in your pocket.</p><div class="tags"><span>HTML/JS</span><span>Geolocation</span><span>Speech</span><span>Wake Lock</span><span>PWA</span></div><button class="flip">↻ See how it works</button></div>
-<div class="bk"><b>The problem</b><p>Most workout apps are paywalled, bloated or built for people who are already fit. Walking distance was another app's job.</p><b>What I built</b><p>Guided full-body sessions with a leg day every week, built around 2×10kg dumbbells, a push-up board, an ab roller and a sit-up bar. Each exercise has an animated demo and a written tutorial. A voice coach and drift-free timers run the session. A GPS walk tracker with Kalman smoothing and jump rejection tracks distance. It installs on the iPhone home screen and works offline.</p><div class="row"><a class="go" href="https://promiseworkout.lol" target="_blank" rel="noopener">promiseworkout.lol →</a><button class="flip">Back</button></div></div></div></div><div class="fc" style="--bg:#e0ddff;--fg:#0b0d1a"><div class="in"><div class="fr"><span class="pill"><i></i>Live · Private chat</span><img src="assets/promchat.jpg" alt="PROMCHAT screenshot" loading="lazy"><h3>PROMCHAT</h3><p>Peer-to-peer chat. No server, no account.</p><div class="tags"><span>WebRTC</span><span>DTLS</span><span>JavaScript</span></div><button class="flip">↻ See how it works</button></div>
-<div class="bk"><b>The problem</b><p>Chat apps store your messages, your contacts and your data on someone else's server.</p><b>What I built</b><p>Chat, photos, voice notes, calls and files go straight between browsers, with groups of up to 5. It's encrypted end to end and keeps no history and no cookies. It blurs when you switch apps, and pictures carry a watermark.</p><div class="row"><a class="go" href="apps/promchat.html">Try it →</a><button class="flip">Back</button></div></div></div></div><div class="fc" style="--bg:#0b0d1a;--fg:#fff"><div class="in"><div class="fr"><span class="pill"><i></i>Live · Solana</span><img src="assets/solkit.jpg" alt="SOLKIT screenshot" loading="lazy"><h3>SOLKIT</h3><p>Vanity Solana addresses, ground on-device.</p><div class="tags"><span>Ed25519</span><span>Web Workers</span><span>Offline</span></div><button class="flip">↻ See how it works</button></div>
-<div class="bk"><b>The problem</b><p>Vanity address sites ask you to trust a server with your secret key.</p><b>What I built</b><p>A single file that grinds for the prefix or suffix you choose, entirely on your device and with no connection. Each match is checked against its secret before it's shown, and nothing is uploaded.</p><div class="row"><a class="go" href="apps/solkit.html">Try it →</a><button class="flip">Back</button></div></div></div></div><div class="fc" style="--bg:#ffd9c4;--fg:#0b0d1a"><div class="in"><div class="fr"><span class="pill"><i></i>Live · Wallet</span><img src="assets/promwallet.jpg" alt="PROMWALLET screenshot" loading="lazy"><h3>PROMWALLET</h3><p>A Solana + EVM wallet in one HTML file.</p><div class="tags"><span>Solana web3</span><span>ethers</span><span>Web Crypto</span></div><button class="flip">↻ See how it works</button></div>
-<div class="bk"><b>The problem</b><p>Wanted a self-custody wallet with no extension, no install and no app store.</p><b>What I built</b><p>Generate or import a wallet. It's stored encrypted on the device, with lock and wipe. Set your own RPC and review every send before it goes. The 0.5% fee is shown before you confirm.</p><div class="row"><a class="go" href="apps/promwallet.html">Try it →</a><button class="flip">Back</button></div></div></div></div><div class="fc" style="--bg:#cdeedb;--fg:#0b0d1a"><div class="in"><div class="fr"><span class="pill"><i></i>Live · Giveaway toolkit</span><img src="assets/promkit.jpg" alt="PROMKIT screenshot" loading="lazy"><h3>PROMKIT</h3><p>22 tools for giveaways, wallets and a little fun.</p><div class="tags"><span>JavaScript</span><span>localStorage</span><span>JSON</span></div><button class="flip">↻ See how it works</button></div>
-<div class="bk"><b>The problem</b><p>Hunting giveaways across many hosts gets messy fast. Who actually paid?</p><b>What I built</b><p>A giveaway tracker that shows paid vs unpaid wins per host, plus 21 other on-device tools. Back up and restore as JSON. Your data stays in your browser.</p><div class="row"><a class="go" href="apps/promkit.html">Try it →</a><button class="flip">Back</button></div></div></div></div><div class="fc" style="--bg:#c9f2ff;--fg:#0b0d1a"><div class="in"><div class="fr"><span class="pill"><i></i>Live · Bundle</span><img src="assets/prompack.jpg" alt="PROMPACK screenshot" loading="lazy"><h3>PROMPACK</h3><p>SOLKIT, PROMCHAT and PROMWALLET in one file.</p><div class="tags"><span>Single file</span><span>Offline</span></div><button class="flip">↻ See how it works</button></div>
-<div class="bk"><b>The problem</b><p>Three tools meant three files to keep track of.</p><b>What I built</b><p>One home screen that opens all three apps. Carry it anywhere, and it works offline.</p><div class="row"><a class="go" href="apps/prompack.html">Try it →</a><button class="flip">Back</button></div></div></div></div><div class="fc" style="--bg:#ffd6e8;--fg:#0b0d1a"><div class="in"><div class="fr"><span class="pill"><i></i>Live · X tool</span><img src="assets/unfollow.jpg" alt="Unfollow Helper screenshot" loading="lazy"><h3>Unfollow Helper</h3><p>See who doesn't follow back, with no bots and no login.</p><div class="tags"><span>JavaScript</span><span>FileReader</span><span>localStorage</span></div><button class="flip">↻ See how it works</button></div>
-<div class="bk"><b>The problem</b><p>Finding who doesn't follow you back usually means risky bots or apps that want your X login.</p><b>What I built</b><p>A tool that runs entirely on your device. Import your official X data archive (following.js / follower.js) or paste handles, and it lists who isn't following back, plus fans you don't follow. Open each profile and unfollow yourself, then tick Done. It makes no network calls and never automates anything.</p><div class="row"><a class="go" href="apps/unfollow.html">Try it →</a><button class="flip">Back</button></div></div></div></div><div class="dash"><span class="pill" style="align-self:flex-start">Your project</span><h3>What should I build next?</h3><p style="color:#555">A wallet tool, a bot or an app. Tell me what it should do.</p><div class="btns"><a class="btn" href="#contact">Get in touch</a></div></div></div>
-<div class="vid"><video src="assets/workout-demo.mp4" autoplay muted loop playsinline></video><div><span class="pill" style="background:transparent;color:#fff;border-color:#fff5"><i></i>Demo clip</span><h3 style="margin-top:12px">Promise Workout in motion</h3><p>An animated exercise demo from the live app. Every move in the app has one.</p><a class="btn" style="background:#fff;color:#0b0d1a;border-color:#fff" href="https://promiseworkout.lol" target="_blank" rel="noopener">Open promiseworkout.lol →</a></div></div></div></section>
-<section id="about"><div class="w"><h2>About &amp; stats</h2><div class="g4"><div class="box stat"><b>7</b><p>Shipped tools, all live</p></div><div class="box stat"><b>0</b><p>Servers needed: everything runs on-device</p></div><div class="box stat"><b><span class="ph">[Add]</span></b><p>Followers on X</p></div><div class="box stat"><b><span class="ph">[Add]</span></b><p>Giveaways won / paid out</p></div></div>
-<div class="g4" style="margin-top:14px"><div class="box"><h4>Communities I'm in</h4><p><span class="ph">[Add community]</span> <span class="ph">[Add community]</span></p></div><div class="box"><h4>Roles</h4><p><span class="ph">[Add role, e.g. ambassador / mod]</span></p></div><div class="box"><h4>Threads &amp; contributions</h4><p><span class="ph">[Add thread link]</span></p></div><div class="box"><h4>What people say</h4><p><span class="ph">[Add real testimonial]</span></p></div></div></div></section>
-<section><div class="w"><h2>How we work together</h2><div class="g4"><div class="box"><div class="n">1</div><h4>You tell me the idea</h4><p>A few messages on X or Telegram. I ask only what I need to know.</p></div><div class="box"><div class="n">2</div><h4>I build fast</h4><p>You get working versions on your phone as I go, so there are no surprises.</p></div><div class="box"><div class="n">3</div><h4>It goes live</h4><p>Deployed as a link or a single file you own, and I tweak it after launch.</p></div></div></div></section>
-<section id="contact" style="border:0"><div class="w"><div class="cta"><h2>Got an idea for a tool?</h2><p style="position:relative">Wallet tool, giveaway kit or something for your phone. DM me and I'll tell you how I'd build it.</p><a class="big" href="https://x.com/promiseishere" target="_blank" rel="noopener">@promiseishere</a><div class="btns"><button class="btn" id="copy">Copy handle</button><a class="btn" href="https://x.com/promiseishere" target="_blank" rel="noopener">Open X</a><a class="btn o" href="https://t.me/lonewithin" target="_blank" rel="noopener">Telegram @lonewithin</a><a class="btn o" href="https://x.com/lonewithin" target="_blank" rel="noopener">Also on X: @lonewithin</a></div></div></div></section></main>
-<footer><div class="w"><span>© <span id="yr">2026</span> Promise · PROM</span><span>X @promiseishere · Telegram @lonewithin</span></div></footer>
-<script>document.querySelectorAll('.flip').forEach(b=>b.onclick=()=>b.closest('.fc').classList.toggle('on'));document.getElementById('copy').onclick=e=>{navigator.clipboard&&navigator.clipboard.writeText('@promiseishere');e.target.textContent='Copied ✓'};document.getElementById('yr').textContent=new Date().getFullYear()</script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Promise — PROM · Proof of Work</title><meta name="description" content="Promise (PROM, @promiseishere): Nigeria-based builder shipping client-side apps — fitness PWA, P2P chat, Solana wallet tools and X utilities.">
+<meta name="theme-color" content="#050507"><link rel="icon" href="assets/icon.png"><link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050507;--fg:#ededf2;--mut:#8b8b99;--line:rgba(255,255,255,.08);--glass:rgba(255,255,255,.035);--acc:#3cf2c4;--acc2:#ff7a45;--r:22px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 Inter,system-ui,-apple-system,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}img,video{display:block;max-width:100%}
+.d{font-family:"Space Grotesk",Inter,sans-serif;letter-spacing:-.035em}
+.w{max-width:1180px;margin:auto;padding:0 22px}
+/* aurora + grain */
+.aur{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.aur i{position:absolute;width:60vmax;height:60vmax;border-radius:50%;filter:blur(90px);opacity:.33;animation:drift 26s ease-in-out infinite alternate}
+.aur i:nth-child(1){background:#0fd9a6;top:-30vmax;left:-15vmax}
+.aur i:nth-child(2){background:#2a5bff;top:-25vmax;right:-25vmax;animation-duration:32s;opacity:.25}
+.aur i:nth-child(3){background:#ff6a3d;bottom:-40vmax;left:20vmax;animation-duration:38s;opacity:.15}
+@keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.15)}}
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.grid-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 50% at 50% 0%,#000 30%,transparent 75%);opacity:.5}
+/* nav */
+nav{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:50;width:min(1180px,calc(100% - 24px));display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 18px;border:1px solid var(--line);border-radius:99px;background:rgba(10,10,14,.6);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4)}
+.brand{font-family:"Space Grotesk";font-weight:700;font-size:17px;display:flex;align-items:center;gap:9px}
+.brand b{font-size:11px;letter-spacing:.14em;padding:3px 7px;border-radius:6px;background:var(--acc);color:#04130e}
+nav ul{display:flex;gap:26px;list-style:none;font-size:14px;color:var(--mut)}nav ul a:hover{color:var(--fg)}
+.cta{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:99px;background:var(--fg);color:#08080a;font-weight:600;font-size:14px;transition:transform .2s,box-shadow .2s}
+.cta:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(60,242,196,.3)}
+.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}.ghost:hover{border-color:rgba(255,255,255,.25)}
+/* hero */
+.hero{padding:170px 0 90px;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--mut);padding:6px 14px 6px 8px;border:1px solid var(--line);border-radius:99px;background:var(--glass)}
+.badge span{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:99px;background:rgba(60,242,196,.12);color:var(--acc);font-weight:600}
+.badge span:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.35}}
+h1{font-size:clamp(48px,9.4vw,124px);line-height:.92;font-weight:600;margin:28px auto 26px;max-width:12ch}
+h1 .g{background:linear-gradient(180deg,#fff 20%,rgba(255,255,255,.38));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 .s{background:linear-gradient(100deg,var(--acc),#7cc8ff 50%,var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:600px;margin:0 auto;color:var(--mut);font-size:clamp(16px,2vw,19px)}.lead strong{color:var(--fg);font-weight:500}
+.acts{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:34px}.acts .cta{padding:14px 24px;font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin:80px auto 0;max-width:900px;border:1px solid var(--line);border-radius:var(--r);background:var(--glass);backdrop-filter:blur(10px)}
+.stats div{padding:24px 16px;text-align:center}.stats div+div{border-left:1px solid var(--line)}
+.stats b{display:block;font:600 34px/1 "Space Grotesk";letter-spacing:-.03em}.stats small{color:var(--mut);font-size:13px}
+/* marquee */
+.mq{border-block:1px solid var(--line);overflow:hidden;padding:20px 0;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.mq div{display:flex;gap:44px;width:max-content;animation:mq 38s linear infinite}
+.mq span{font:500 18px "Space Grotesk";color:var(--mut);white-space:nowrap;display:flex;align-items:center;gap:44px}.mq span:after{content:"✦";color:var(--acc);font-size:12px}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* sections */
+section{padding:120px 0}
+.eyebrow{font:600 12px Inter;letter-spacing:.18em;text-transform:uppercase;color:var(--acc)}
+h2{font-size:clamp(36px,5.4vw,64px);line-height:1;font-weight:600;margin:14px 0 16px;max-width:16ch}
+.sub{color:var(--mut);max-width:520px;margin-bottom:52px}
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.card{position:relative;grid-column:span 2;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));overflow:hidden;cursor:pointer;transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .3s;transform-style:preserve-3d;display:flex;flex-direction:column;text-align:left;color:inherit;font:inherit}
+.card:hover,.card:focus-visible{border-color:rgba(255,255,255,.2);outline:none}
+.card:before{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--x,50%) var(--y,0%),rgba(60,242,196,.14),transparent 45%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:2}
+.card:hover:before{opacity:1}
+.card.wide{grid-column:span 3}.card.feat{grid-column:span 6;flex-direction:row;cursor:default}
+.ct{padding:26px 26px 0;position:relative;z-index:3}
+.tagl{font-size:12px;color:var(--mut);display:flex;gap:8px;align-items:center}.tagl:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc)}
+.card h3{font:600 26px/1.1 "Space Grotesk";letter-spacing:-.025em;margin:10px 0 8px}
+.card p{color:var(--mut);font-size:15px}
+.more{margin-top:14px;font-size:14px;font-weight:500;display:inline-flex;gap:6px;color:var(--fg)}.card:hover .more i{transform:translateX(4px)}.more i{font-style:normal;transition:transform .2s}
+/* device */
+.stage{margin-top:auto;padding:28px 26px 0;display:flex;justify-content:center;position:relative;height:330px;overflow:hidden}
+.phone{width:200px;border-radius:30px;padding:7px;background:linear-gradient(145deg,#2a2a33,#0c0c10);box-shadow:0 30px 60px -12px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.1);transition:transform .5s cubic-bezier(.2,.8,.2,1);align-self:flex-start}
+.phone img,.phone video{border-radius:24px;width:100%;height:auto;aspect-ratio:390/844;object-fit:cover;object-position:top;background:#000}
+.card:hover .phone{transform:translateY(-10px)}
+.feat .ct{flex:1;padding:44px;display:flex;flex-direction:column;justify-content:center}
+.feat h3{font-size:clamp(32px,4vw,52px)}.feat p{font-size:17px;max-width:460px}
+.feat .stage{flex:0 0 46%;height:auto;min-height:480px;padding:40px 30px 0;gap:18px;background:radial-gradient(circle at 50% 70%,rgba(60,242,196,.18),transparent 60%)}
+.feat .phone{width:220px}.feat .phone.b{margin-top:60px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 26px}.pills span{font-size:12.5px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);color:#c9c9d4;background:rgba(255,255,255,.03)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* modal */
+dialog{margin:auto;border:1px solid var(--line);border-radius:28px;background:#0b0b10;color:var(--fg);width:min(940px,calc(100% - 24px));max-height:calc(100dvh - 40px);padding:0;overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(8px)}
+dialog[open]{animation:pop .35s cubic-bezier(.2,.8,.2,1)}@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}}
+.mg{display:grid;grid-template-columns:1fr 280px;gap:0}
+.mb{padding:40px}.mb h3{font:600 40px/1 "Space Grotesk";letter-spacing:-.03em;margin:10px 0 24px}
+.mb h4{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin:22px 0 8px;font-weight:600}
+.mb p,.mb li{color:#c4c4cf;font-size:15.5px}.mb ul{padding-left:18px}.mb li{margin:5px 0}
+.ms{background:radial-gradient(circle at 50% 40%,rgba(60,242,196,.15),transparent 65%);display:flex;align-items:center;justify-content:center;padding:36px 30px;border-left:1px solid var(--line)}
+.ms .phone{width:220px}
+.x{position:sticky;top:14px;float:right;margin:14px 14px 0 0;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#16161d;color:var(--fg);font-size:18px;cursor:pointer;z-index:5}
+/* contact */
+.contact{text-align:center;border:1px solid var(--line);border-radius:36px;padding:90px 24px;background:radial-gradient(ellipse at 50% 120%,rgba(60,242,196,.22),transparent 60%),var(--glass);position:relative;overflow:hidden}
+.contact h2{margin:14px auto 16px}.contact .sub{margin:0 auto 40px}
+.links{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:900px;margin:auto}
+.lk{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:18px 20px;border:1px solid var(--line);border-radius:18px;background:rgba(0,0,0,.35);text-align:left;transition:border-color .2s,transform .2s}
+.lk:hover{border-color:var(--acc);transform:translateY(-2px)}.lk small{color:var(--mut);font-size:12px}.lk b{font-weight:600}
+footer{padding:50px 0 60px;color:var(--mut);font-size:13px}footer .w{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+/* reveal */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}.rv.on{opacity:1;transform:none}
+@media(max-width:900px){.bento{grid-template-columns:1fr 1fr}.card,.card.wide{grid-column:span 1}.card.feat{grid-column:span 2;flex-direction:column}.feat .stage{min-height:0;height:420px}.mg{grid-template-columns:1fr}.ms{border-left:0;border-top:1px solid var(--line)}.links{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){nav ul{display:none}.hero{padding:130px 0 60px}.stats{grid-template-columns:1fr 1fr}.stats div:nth-child(3){border-left:0}.stats div:nth-child(n+3){border-top:1px solid var(--line)}.bento{grid-template-columns:1fr}.card,.card.wide,.card.feat{grid-column:span 1}.feat .ct{padding:28px 24px}.feat .stage{height:380px;padding-top:24px}.feat .phone{width:170px}.feat .phone.b{margin-top:40px}section{padding:90px 0}.mb{padding:28px 22px}.mb h3{font-size:32px}.links{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*:before{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style></head><body>
+<div class="aur" aria-hidden="true"><i></i><i></i><i></i></div><div class="grid-bg" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
+<nav aria-label="Main"><a class="brand" href="#top">Promise <b>PROM</b></a><ul><li><a href="#work">Work</a></li><li><a href="#stack">Stack</a></li><li><a href="#contact">Contact</a></li></ul><a class="cta" href="https://x.com/promiseishere" target="_blank" rel="noopener">Follow on 𝕏</a></nav>
+<main id="top">
+<header class="hero w"><div class="badge rv"><span>Live</span> Builder · Nigeria 🇳🇬</div>
+<h1 class="d rv"><span class="g">Tools that run</span> <span class="s">anywhere.</span></h1>
+<p class="lead rv">I'm <strong>Promise</strong>, a Solana degen and giveaway hunter who builds his own tools: a fitness PWA, peer-to-peer chat, self-custody wallets and X utilities. <strong>No servers. Every one is live.</strong></p>
+<div class="acts rv"><a class="cta" href="#work">Explore the work →</a><a class="cta ghost" href="#contact">Get in touch</a></div>
+<div class="stats rv"><div><b>7</b><small>Shipped tools</small></div><div><b>0</b><small>Servers</small></div><div><b>iPhone</b><small>Ready</small></div><div><b>100%</b><small>Client-side</small></div></div></header>
+<div class="mq" id="stack" aria-label="Tech stack"><div></div></div>
+<section id="work"><div class="w"><div class="rv"><div class="eyebrow">Selected work</div><h2 class="d">Proof of work, not promises.</h2><p class="sub">Seven shipped products. Open any one for the case study, or try it live.</p></div><div class="bento" id="bento"></div></div></section>
+<section id="contact"><div class="w"><div class="contact rv"><div class="eyebrow">Contact</div><h2 class="d">Let's build the next one.</h2><p class="sub">Got an idea for a wallet tool, a giveaway kit or an app for your phone? Message me.</p>
+<div class="links"><a class="lk" href="https://x.com/promiseishere" target="_blank" rel="noopener"><small>X · main</small><b>@promiseishere</b></a><a class="lk" href="https://t.me/lonewithin" target="_blank" rel="noopener"><small>Telegram</small><b>@lonewithin</b></a><a class="lk" href="https://x.com/lonewithin" target="_blank" rel="noopener"><small>Also on X</small><b>@lonewithin</b></a><a class="lk" href="https://github.com/lonewithin" target="_blank" rel="noopener"><small>GitHub</small><b>lonewithin</b></a></div></div></div></section>
+</main>
+<footer><div class="w"><span>© <span id="yr">2026</span> Promise · PROM</span><span>Built by hand. Runs on-device.</span></div></footer>
+<dialog id="dlg" aria-labelledby="mt"><button class="x" aria-label="Close" onclick="dlg.close()">✕</button><div class="mg"><div class="mb" id="mb"></div><div class="ms" id="ms"></div></div></dialog>
+<script>
+const P=[
+{id:'workout',feat:1,t:'Promise Workout',k:'Fitness PWA',s:'A beginner-friendly fat-loss coach that lives on your home screen.',img:'workout.jpg',url:'https://promiseworkout.lol',lab:'Open promiseworkout.lol',
+ prob:'Most workout apps are paywalled, bloated or built for people who are already fit, and tracking walking distance was another app\'s job.',
+ build:['Guided full-body fat-loss sessions with a leg day every week, built for 2×10kg dumbbells, a push-up board, an ab roller and a sit-up bar','Animated demo and written ⓘ tutorial for every exercise','Voice coach and drift-free timers, with the screen kept awake by Wake Lock','GPS walk/trek tracker with Kalman smoothing, jump rejection, moving time and calories','Installable PWA with a service worker for offline use, deployed on Netlify with security headers'],
+ stack:['HTML/CSS/JS','Geolocation','Speech Synthesis','Wake Lock','Service Worker','SVG animation']},
+{id:'promchat',t:'PROMCHAT',k:'Private chat',s:'Peer-to-peer chat, calls and files. No server, no account.',img:'promchat.jpg',url:'apps/promchat.html',
+ prob:'Chat apps store your messages, contacts and data on someone else\'s server.',
+ build:['Messages, photos, voice notes, calls and files go straight between browsers','Groups of up to 5','Encrypted end to end (WebRTC DTLS), with no history and no cookies','Blurs when you switch apps, and pictures carry a watermark'],stack:['WebRTC','DTLS','JavaScript']},
+{id:'solkit',t:'SOLKIT',k:'Solana · offline',s:'Vanity Solana addresses, ground entirely on your device.',img:'solkit.jpg',url:'apps/solkit.html',
+ prob:'Vanity address sites ask you to trust a server with your secret key.',
+ build:['A single file that works with no connection','Grinds for the prefix or suffix you choose','Each match is checked against its secret before it\'s shown','Keys never leave the device and nothing is uploaded'],stack:['Ed25519','Base58','JavaScript']},
+{id:'promwallet',t:'PROMWALLET',k:'Wallet · Solana + EVM',s:'A self-custody wallet in one HTML file.',img:'promwallet.jpg',url:'apps/promwallet.html',
+ prob:'Wanted a self-custody wallet with no extension, no install and no app store.',
+ build:['Generate or import a Solana + EVM wallet','Stored encrypted on the device, with lock and wipe','Custom RPC and a review step before every send','The 0.5% fee is disclosed before you confirm'],stack:['Solana web3','ethers','Web Crypto']},
+{id:'promkit',wide:1,t:'PROMKIT',k:'Toolkit · 22 tools',s:'22 tools for giveaways, wallets and a little fun.',img:'promkit.jpg',url:'apps/promkit.html',
+ prob:'Hunting giveaways across many hosts gets messy fast. Who actually paid?',
+ build:['A giveaway tracker that shows paid vs unpaid wins per host','21 more tools that run on the device','Back up and restore as JSON','Data stays in your browser'],stack:['JavaScript','localStorage','JSON']},
+{id:'unfollow',wide:1,t:'Unfollow Helper',k:'X utility',s:'See who doesn\'t follow back, with no bots and no login.',img:'unfollow.jpg',url:'apps/unfollow.html',
+ prob:'Finding who doesn\'t follow back usually means risky bots or giving an app your X login.',
+ build:['Import your official X data archive (following.js / follower.js) or paste handles','Lists who isn\'t following back, plus fans you don\'t follow','You open each profile and unfollow yourself, then tick Done','Makes no network calls and automates nothing on X'],stack:['JavaScript','FileReader','localStorage']},
+{id:'prompack',t:'PROMPACK',k:'Bundle',s:'SOLKIT, PROMCHAT and PROMWALLET in one file.',img:'prompack.jpg',url:'apps/prompack.html',
+ prob:'Three tools meant three files to keep track of.',build:['One home screen that opens all three apps','A single file you can carry anywhere, and it works offline'],stack:['Single file','Offline']}];
+const ext=u=>u.startsWith('http')?' target="_blank" rel="noopener"':'';
+const phone=(src,cls='')=>`<div class="phone ${cls}"><img src="assets/${src}" alt="" loading="lazy" decoding="async" width="390" height="844"></div>`;
+const B=document.getElementById('bento');
+P.forEach((p,i)=>{let el;
+ if(p.feat){el=document.createElement('article');el.className='card feat rv';el.innerHTML=`<div class="ct"><div class="tagl">${p.k} · Featured</div><h3>${p.t}</h3><p>${p.s}</p><div class="pills">${p.stack.map(x=>`<span>${x}</span>`).join('')}</div><div class="btnrow"><a class="cta" href="${p.url}"${ext(p.url)}>${p.lab} →</a><button class="cta ghost" data-i="${i}">Case study</button></div></div><div class="stage">${phone(p.img)}<div class="phone b"><video src="assets/workout-demo.mp4" autoplay muted loop playsinline aria-label="Exercise demo animation"></video></div></div>`}
+ else{el=document.createElement('button');el.className='card rv'+(p.wide?' wide':'');el.dataset.i=i;el.setAttribute('aria-label',p.t+': open case study');el.innerHTML=`<div class="ct"><div class="tagl">${p.k}</div><h3>${p.t}</h3><p>${p.s}</p><span class="more">Case study <i>→</i></span></div><div class="stage">${phone(p.img)}</div>`}
+ B.append(el)});
+const dlg=document.getElementById('dlg');
+document.addEventListener('click',e=>{const t=e.target.closest('[data-i]');if(!t)return;const p=P[t.dataset.i];
+ document.getElementById('mb').innerHTML=`<div class="tagl">${p.k}</div><h3 id="mt">${p.t}</h3><p>${p.s}</p><h4>The problem</h4><p>${p.prob}</p><h4>The build</h4><ul>${p.build.map(x=>`<li>${x}</li>`).join('')}</ul><h4>Stack</h4><div class="pills">${p.stack.map(x=>`<span>${x}</span>`).join('')}</div><a class="cta" href="${p.url}"${ext(p.url)}>${p.lab||'Try it live'} →</a>`;
+ document.getElementById('ms').innerHTML=phone(p.img);dlg.showModal()});
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+const S=['HTML','CSS','JavaScript','PWA','Service Workers','Geolocation API','Speech Synthesis','Wake Lock','WebRTC','Solana web3','ethers / EVM','Ed25519','Web Crypto','SVG Animation','Netlify','Vercel'];
+document.querySelector('.mq div').innerHTML=[...S,...S].map(x=>`<span>${x}</span>`).join('');
+const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+if(!rm&&matchMedia('(hover:hover)').matches)document.querySelectorAll('.card').forEach(c=>{
+ c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;c.style.setProperty('--x',x*100+'%');c.style.setProperty('--y',y*100+'%');if(!c.classList.contains('feat'))c.style.transform=`perspective(900px) rotateX(${(.5-y)*5}deg) rotateY(${(x-.5)*5}deg)`});
+ c.addEventListener('pointerleave',()=>c.style.transform='')});
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script></body></html>
