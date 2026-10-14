@@ -103,11 +103,11 @@ footer{padding:50px 0 60px;color:var(--mut);font-size:13px}footer .w{display:fle
 <main id="top">
 <header class="hero w"><div class="badge rv"><span>Live</span> Builder · Nigeria 🇳🇬</div>
 <h1 class="d rv"><span class="g">Tools that run</span> <span class="s">anywhere.</span></h1>
-<p class="lead rv">I'm <strong>Promise</strong>, a Solana degen and vibecoder who builds his own tools: a fitness PWA, peer-to-peer chat, self-custody wallets and X utilities. <strong>No servers. Every one is live.</strong></p>
+<p class="lead rv">I'm <strong>Promise</strong>, a Solana degen and vibecoder who builds his own tools: a fitness PWA, peer-to-peer chat, self-custody wallets and X utilities. <strong>Most run entirely on your device. Every one is live.</strong></p>
 <div class="acts rv"><a class="cta" href="#work">Explore the work →</a><a class="cta ghost" href="#contact">Get in touch</a></div>
-<div class="stats rv"><div><b>9</b><small>Shipped tools</small></div><div><b>0</b><small>Servers</small></div><div><b>Mobile</b><small>Ready</small></div><div><b>100%</b><small>Client-side</small></div></div></header>
+<div class="stats rv"><div><b>10</b><small>Shipped tools</small></div><div><b>8</b><small>Run on-device</small></div><div><b>Mobile</b><small>Ready</small></div><div><b>2</b><small>Telegram bots</small></div></div></header>
 <div class="mq" id="stack" aria-label="Tech stack"><div></div></div>
-<section id="work"><div class="w"><div class="rv"><div class="eyebrow">Selected work</div><h2 class="d">Proof of work, not promises.</h2><p class="sub">Nine shipped products. Open any one for the case study, or try it live.</p></div><div class="bento" id="bento"></div></div></section>
+<section id="work"><div class="w"><div class="rv"><div class="eyebrow">Selected work</div><h2 class="d">Proof of work, not promises.</h2><p class="sub">Ten shipped products. Open any one for the case study, or try it live.</p></div><div class="bento" id="bento"></div></div></section>
 <section id="contact"><div class="w"><div class="contact rv"><div class="eyebrow">Contact</div><h2 class="d">Let's build the next one.</h2><p class="sub">Got an idea for a wallet tool, a giveaway kit or an app for your phone? Message me.</p>
 <div class="links"><a class="lk" href="https://x.com/promiseishere" target="_blank" rel="noopener"><small>X · main</small><b>@promiseishere</b></a><a class="lk" href="https://t.me/lonewithin" target="_blank" rel="noopener"><small>Telegram</small><b>@lonewithin</b></a><a class="lk" href="https://x.com/lonewithin" target="_blank" rel="noopener"><small>Also on X</small><b>@lonewithin</b></a><a class="lk" href="https://github.com/lonewithin" target="_blank" rel="noopener"><small>GitHub</small><b>lonewithin</b></a></div></div></div></section>
 </main>
@@ -134,14 +134,17 @@ const P=[
 {id:'unfollow',wide:1,t:'Unfollow Helper',k:'X utility',s:'See who doesn\'t follow back, with no bots and no login.',img:'unfollow.jpg',url:'apps/unfollow.html',
  prob:'Finding who doesn\'t follow back usually means risky bots or giving an app your X login.',
  build:['Import your official X data archive (following.js / follower.js) or paste handles','Lists who isn\'t following back, plus fans you don\'t follow','You open each profile and unfollow yourself, then tick Done','Makes no network calls and automates nothing on X'],stack:['JavaScript','FileReader','localStorage']},
-{id:'workoutv2',t:'Promise Workout v2',k:'React + Vite rebuild',s:'The workout app rebuilt as a multi-file React project.',img:'workout-v2.jpg',url:'https://promise-workout-v2.vercel.app',code:'https://github.com/lonewithin/promise-workout-v2',
+{id:'workoutv2',wide:1,t:'Promise Workout v2',k:'React + Vite rebuild',s:'The workout app rebuilt as a multi-file React project.',img:'workout-v2.jpg',url:'https://promise-workout-v2.vercel.app',code:'https://github.com/lonewithin/promise-workout-v2',
  prob:'A single huge HTML file gets hard to grow and maintain.',
  build:['Rebuilt in React + Vite as a proper multi-file codebase','Installable PWA with a generated service worker for offline use','Pushing to GitHub auto-deploys it to Vercel'],stack:['React','Vite','PWA','Workbox','Vercel']},
-{id:'pricebot',t:'@PriceAndPricesBot',k:'Telegram bot',s:'Crypto prices, conversions and Solana info inside Telegram.',img:'pricebot.jpg',url:'https://t.me/PriceAndPricesBot',lab:'Open in Telegram',code:'https://github.com/lonewithin/priceandprices-bot',
+{id:'pricebot',wide:1,t:'@PriceAndPricesBot',k:'Telegram bot',s:'Crypto prices, conversions and Solana info inside Telegram.',img:'pricebot.jpg',url:'https://t.me/PriceAndPricesBot',lab:'Open in Telegram',code:'https://github.com/lonewithin/priceandprices-bot',
  prob:'Checking prices, Naira rates and Solana balances meant switching between several apps.',
  build:['/price for coin prices and /convert for USD ⇄ NGN','/top and /trending coin lists','/sol to check a Solana wallet balance','/news for Solana headlines','Inline $coin lookups in chat'],stack:['Node.js','Telegram Bot API','Solana']},
-{id:'prompack',t:'PROMPACK',k:'Bundle',s:'SOLKIT, PROMCHAT and PROMWALLET in one file.',img:'prompack.jpg',url:'apps/prompack.html',
- prob:'Three tools meant three files to keep track of.',build:['One home screen that opens all three apps','A single file you can carry anywhere, and it works offline'],stack:['Single file','Offline']}];
+{id:'prompack',wide:1,t:'PROMPACK',k:'Bundle',s:'SOLKIT, PROMCHAT and PROMWALLET in one file.',img:'prompack.jpg',url:'apps/prompack.html',
+ prob:'Three tools meant three files to keep track of.',build:['One home screen that opens all three apps','A single file you can carry anywhere, and it works offline'],stack:['Single file','Offline']},
+{id:'kickbot',wide:1,t:'@Akickinactivebot',k:'Telegram bot · moderation',s:'Finds and removes inactive members from Telegram groups.',img:'kickbot.jpg',url:'https://t.me/Akickinactivebot',lab:'Open in Telegram',code:'https://github.com/lonewithin/kick-inactive-bot',
+ prob:'Big groups fill up with silent members, and finding them by hand is impossible.',
+ build:['Tracks member activity from the moment the bot is added','/inactive lists quiet members; /kick_inactive removes them after you confirm with buttons','/exempt protects chosen members, and /stats shows activity','Weekly /autokick on a cron schedule','Admins are never removed, and kicked members can rejoin'],stack:['Node.js','grammY','Redis-ready','Serverless webhook','Cron']}];
 const ext=u=>u.startsWith('http')?' target="_blank" rel="noopener"':'';
 const phone=(src,cls='')=>`<div class="phone ${cls}"><img src="assets/${src}" alt="" loading="lazy" decoding="async" width="390" height="844"></div>`;
 const B=document.getElementById('bento');
